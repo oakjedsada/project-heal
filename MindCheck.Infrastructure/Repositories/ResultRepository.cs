@@ -1,0 +1,25 @@
+using Microsoft.EntityFrameworkCore;
+using MindCheck.Application.Abstractions;
+using MindCheck.Domain.Entities;
+using MindCheck.Domain.ValueObjects;
+
+namespace MindCheck.Infrastructure.Repositories;
+
+public sealed class ResultRepository : IResultRepository
+{
+    private readonly MindCheckDbContext _db;
+
+    public ResultRepository(MindCheckDbContext db)
+    {
+        _db = db;
+    }
+
+    public async Task AddAsync(Result result, CancellationToken cancellationToken)
+    {
+        _db.Results.Add(result);
+        await _db.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task<IReadOnlyList<Result>> GetBySessionIdAsync(SessionId sessionId, CancellationToken cancellationToken) =>
+        await _db.Results.AsNoTracking().Where(r => r.SessionId == sessionId).ToListAsync(cancellationToken);
+}
