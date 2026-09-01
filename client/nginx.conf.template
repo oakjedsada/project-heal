@@ -1,0 +1,12 @@
+server {
+    listen ${PORT};
+    server_name _;
+    root /usr/share/nginx/html;
+    index index.html;
+
+    # SPA fallback: every unmatched path serves index.html so React Router's
+    # client-side routes (e.g. a hard reload on /admin/instruments/new) work.
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+}

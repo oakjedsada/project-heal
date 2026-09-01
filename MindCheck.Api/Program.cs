@@ -41,6 +41,21 @@ builder.Services.AddSwaggerGen(options =>
 
 builder.Services.AddMindCheckInfrastructure(builder.Configuration);
 
+// Only needed once client and api are on different origins (a real deploy,
+// e.g. two separate Railway services). Local dev never hits this: Vite's
+// dev-server proxy makes /api same-origin, so no browser CORS check applies.
+var corsAllowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? [];
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("Default", policy =>
+    {
+        if (corsAllowedOrigins.Length > 0)
+        {
+            policy.WithOrigins(corsAllowedOrigins).AllowAnyHeader().AllowAnyMethod();
+        }
+    });
+});
+
 builder.Services.AddSingleton(TimeProvider.System);
 builder.Services.AddScoped<IScoringEvaluator, ScoringEvaluator>();
 builder.Services.AddScoped<IRiskEvaluator, RiskEvaluator>();
@@ -101,6 +116,8 @@ app.UseExceptionHandler();
 
 app.UseSwagger();
 app.UseSwaggerUI();
+
+app.UseCors("Default");
 
 app.UseAuthentication();
 app.UseAuthorization();

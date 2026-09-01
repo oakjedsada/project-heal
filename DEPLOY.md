@@ -1,0 +1,58 @@
+# Running & deploying MindCheck
+
+## Local, full stack, via Docker
+
+```bash
+docker compose up --build
+```
+
+Starts three containers: `db` (Postgres 16), `api` (ASP.NET Core, auto-migrates
+on startup), `client` (Vite build served by nginx). Verified working end to
+end, including the sample-data button reaching the emergency page.
+
+- Client: http://localhost:18081
+- Api + Swagger: http://localhost:18080/swagger
+- Admin login password (this compose file only): `local-docker-admin-password`
+
+`db` alone (for local `dotnet run` against a real Postgres instead of the full
+container stack) is still `docker compose up -d db`, unchanged from earlier
+phases — it listens on host port 5433.
+
+## Deploying to Railway (two services + one Postgres plugin)
+
+Railway needs your account; this is written so you can follow it yourself —
+these steps can't be done on your behalf without your login.
+
+1. **Postgres**: In your Railway project, add a Postgres plugin. Railway
+   gives it connection variables (`PGHOST`, `PGPORT`, `PGDATABASE`, `PGUSER`,
+   `PGPASSWORD`) you'll reference from the API service.
+
+2. **Api service**: New service → deploy from this repo → build method
+   "Dockerfile", path `MindCheck.Api/Dockerfile`, root directory `/` (the
+   Dockerfile needs the repo root as build context — it copies sibling
+   projects). Set these variables:
+   - `ConnectionStrings__MindCheck` = `Host=${{Postgres.PGHOST}};Port=${{Postgres.PGPORT}};Database=${{Postgres.PGDATABASE}};Username=${{Postgres.PGUSER}};Password=${{Postgres.PGPASSWORD}}`
+   - `AdminAuth__Password` = a real password, not the dev placeholder
+   - `AdminAuth__JwtSigningKey` = a random string, 32+ bytes
+   - `Cors__AllowedOrigins__0` = the client service's public URL (see step 4)
+   - `EmergencyHelpResources__0__Label` / `__Contact` = real crisis line info before this is shown to anyone for real
+
+   Railway injects `PORT` automatically; the Dockerfile already listens on it.
+
+3. **Client service**: New service → same repo → build method "Dockerfile",
+   path `client/Dockerfile`, root directory `client`. Set:
+   - Build arg `VITE_API_BASE_URL` = the Api service's public URL (step 2)
+
+4. **Chicken-and-egg**: Railway only assigns a public URL after a service's
+   first deploy, so the exact order above (Postgres → Api → Client) means
+   step 2's `Cors__AllowedOrigins__0` won't be known until step 3 exists.
+   Deploy Api first without it, get the client's URL, come back and set it,
+   redeploy Api. Same idea in reverse if you'd rather fix the Api's URL first.
+
+## What's still a placeholder, deploy-blocking for a real (non-demo) launch
+
+- Every scoring cut-off and risk threshold in `MindCheck.Infrastructure/Seed/SeedData.cs`
+  is dummy data (`PLACEHOLDER-DO-NOT-USE-CLINICALLY`) — replace via the admin
+  UI or a new seed before this represents anything real.
+- `AdminAuth` is a single shared password (see [ADR 0012](docs/adr/0012-admin-auth-single-password-jwt.md)) — fine for a portfolio demo, not for a real deployment with real user data.
+- `EmergencyHelpResources` in `appsettings.json` is placeholder hotline text.
