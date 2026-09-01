@@ -22,4 +22,11 @@ public sealed class ResultRepository : IResultRepository
 
     public async Task<IReadOnlyList<Result>> GetBySessionIdAsync(SessionId sessionId, CancellationToken cancellationToken) =>
         await _db.Results.AsNoTracking().Where(r => r.SessionId == sessionId).ToListAsync(cancellationToken);
+
+    public async Task<IReadOnlyList<InstrumentLevelCount>> GetLevelCountsAsync(CancellationToken cancellationToken) =>
+        await _db.Results
+            .AsNoTracking()
+            .GroupBy(r => new { r.InstrumentId, r.Level })
+            .Select(g => new InstrumentLevelCount(g.Key.InstrumentId, g.Key.Level, g.Count()))
+            .ToListAsync(cancellationToken);
 }

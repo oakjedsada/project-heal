@@ -58,6 +58,43 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/dashboard/stats": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["DashboardStatsDto"];
+                        "application/json": components["schemas"]["DashboardStatsDto"];
+                        "text/json": components["schemas"]["DashboardStatsDto"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/admin/flow-transitions": {
         parameters: {
             query?: never;
@@ -506,6 +543,10 @@ export interface components {
             orderNo?: number;
             choices?: components["schemas"]["CreatedChoiceDto"][] | null;
         };
+        DashboardStatsDto: {
+            levelBreakdown?: components["schemas"]["LevelBreakdownDto"][] | null;
+            weeklyTrend?: components["schemas"]["WeeklyTrendPointDto"][] | null;
+        };
         FlowTransitionDto: {
             /** Format: int32 */
             id?: number;
@@ -552,6 +593,12 @@ export interface components {
             code?: string | null;
             name?: string | null;
         };
+        LevelBreakdownDto: {
+            instrumentCode?: string | null;
+            level?: string | null;
+            /** Format: int32 */
+            count?: number;
+        };
         NextStepResponse: {
             isComplete?: boolean;
             question?: components["schemas"]["QuestionDto"];
@@ -587,6 +634,12 @@ export interface components {
             questionId?: number;
             /** Format: int32 */
             choiceId?: number;
+        };
+        WeeklyTrendPointDto: {
+            /** Format: date */
+            weekStart?: string;
+            /** Format: int32 */
+            sessionCount?: number;
         };
     };
     responses: never;

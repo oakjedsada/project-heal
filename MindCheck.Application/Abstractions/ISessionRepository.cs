@@ -10,4 +10,7 @@ public interface ISessionRepository
     Task AddAsync(Session session, CancellationToken cancellationToken);
 
     Task UpdateAsync(Session session, CancellationToken cancellationToken);
+
+    /// <summary>Anonymous aggregate: every session's start time, nothing session-identifying.</summary>
+    Task<IReadOnlyList<DateTimeOffset>> GetAllStartedAtAsync(CancellationToken cancellationToken);
 }

@@ -142,9 +142,14 @@ export function CreateInstrumentPage() {
     <div className="mx-auto max-w-2xl px-4 py-8">
       <div className="mb-4 flex items-center justify-between">
         <h1 className="text-xl font-semibold text-slate-900">สร้างแบบประเมินใหม่</h1>
-        <Link to="/admin/flow-transitions" className="text-sm text-blue-700 underline">
-          จัดการเส้นทางแบบประเมิน
-        </Link>
+        <div className="flex gap-4 text-sm text-blue-700">
+          <Link to="/admin/dashboard" className="underline">
+            สถิติรวม
+          </Link>
+          <Link to="/admin/flow-transitions" className="underline">
+            เส้นทางแบบประเมิน
+          </Link>
+        </div>
       </div>
 
       {error && (

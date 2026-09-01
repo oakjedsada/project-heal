@@ -28,4 +28,7 @@ public sealed class SessionRepository : ISessionRepository
         _db.Sessions.Update(session);
         await _db.SaveChangesAsync(cancellationToken);
     }
+
+    public async Task<IReadOnlyList<DateTimeOffset>> GetAllStartedAtAsync(CancellationToken cancellationToken) =>
+        await _db.Sessions.AsNoTracking().Select(s => s.StartedAt).ToListAsync(cancellationToken);
 }

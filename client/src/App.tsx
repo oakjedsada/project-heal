@@ -3,6 +3,7 @@ import { AdminAuthProvider } from './admin/AdminAuthContext'
 import { AdminRouteGuard } from './admin/AdminRouteGuard'
 import { AdminLoginPage } from './admin/pages/AdminLoginPage'
 import { CreateInstrumentPage } from './admin/pages/CreateInstrumentPage'
+import { DashboardPage } from './admin/pages/DashboardPage'
 import { FlowTransitionsPage } from './admin/pages/FlowTransitionsPage'
 import { Layout } from './components/Layout'
 import { AssessmentPage } from './pages/AssessmentPage'
@@ -32,6 +33,14 @@ function AdminApp() {
       <Routes>
         <Route path="login" element={<AdminLoginPage />} />
         <Route
+          path="dashboard"
+          element={
+            <AdminRouteGuard>
+              <DashboardPage />
+            </AdminRouteGuard>
+          }
+        />
+        <Route
           path="instruments/new"
           element={
             <AdminRouteGuard>
@@ -47,7 +56,7 @@ function AdminApp() {
             </AdminRouteGuard>
           }
         />
-        <Route path="*" element={<Navigate to="/admin/login" replace />} />
+        <Route path="*" element={<Navigate to="/admin/dashboard" replace />} />
       </Routes>
     </AdminAuthProvider>
   )

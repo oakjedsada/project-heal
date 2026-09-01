@@ -103,9 +103,14 @@ export function FlowTransitionsPage() {
     <div className="mx-auto max-w-3xl px-4 py-8">
       <div className="mb-4 flex items-center justify-between">
         <h1 className="text-xl font-semibold text-slate-900">เส้นทางแบบประเมิน (flow transitions)</h1>
-        <Link to="/admin/instruments/new" className="text-sm text-blue-700 underline">
-          สร้างแบบประเมินใหม่
-        </Link>
+        <div className="flex gap-4 text-sm text-blue-700">
+          <Link to="/admin/dashboard" className="underline">
+            สถิติรวม
+          </Link>
+          <Link to="/admin/instruments/new" className="underline">
+            สร้างแบบประเมินใหม่
+          </Link>
+        </div>
       </div>
 
       {error && <p className="mb-4 rounded-md bg-red-50 px-3 py-2 text-sm text-red-800">{error}</p>}

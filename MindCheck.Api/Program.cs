@@ -73,6 +73,7 @@ builder.Services.AddScoped<GetInstrumentDetailUseCase>();
 builder.Services.AddScoped<CreateFlowTransitionUseCase>();
 builder.Services.AddScoped<ListFlowTransitionsUseCase>();
 builder.Services.AddScoped<DeleteFlowTransitionUseCase>();
+builder.Services.AddScoped<GetDashboardStatsUseCase>();
 
 builder.Services.Configure<AdminAuthOptions>(builder.Configuration.GetSection(AdminAuthOptions.SectionName));
 

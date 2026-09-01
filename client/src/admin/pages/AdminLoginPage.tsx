@@ -16,7 +16,7 @@ export function AdminLoginPage() {
     const ok = await login(password)
     setIsLoading(false)
     if (ok) {
-      navigate('/admin/instruments/new')
+      navigate('/admin/dashboard')
     } else {
       setError('รหัสผ่านไม่ถูกต้อง')
     }
