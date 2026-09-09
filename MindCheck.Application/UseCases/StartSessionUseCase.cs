@@ -22,7 +22,7 @@ public sealed class StartSessionUseCase
         _timeProvider = timeProvider;
     }
 
-    public async Task<StartSessionResponse> ExecuteAsync(CancellationToken cancellationToken)
+    public async Task<StartSessionResponse> ExecuteAsync(UserId userId, CancellationToken cancellationToken)
     {
         var startTransitions = await _flowTransitionRepository.GetByFromInstrumentIdAsync(null, cancellationToken);
         var startTransition = startTransitions.OrderBy(t => t.Id).FirstOrDefault()
@@ -31,6 +31,7 @@ public sealed class StartSessionUseCase
         var now = _timeProvider.GetUtcNow();
         var session = new Session(
             new SessionId(Guid.NewGuid()),
+            userId,
             Guid.NewGuid().ToString("N"),
             now,
             now,

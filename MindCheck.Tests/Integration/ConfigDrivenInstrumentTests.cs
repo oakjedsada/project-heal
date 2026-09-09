@@ -87,9 +87,10 @@ public sealed class ConfigDrivenInstrumentTests : IClassFixture<MindCheckApiFact
         var transitionResponse = await _client.PostAsJsonAsync("/api/admin/flow-transitions", transitionRequest);
         transitionResponse.EnsureSuccessStatusCode();
 
-        // 3. Now act as an ordinary (unauthenticated) end user, in the same
-        // process, same run, no restart in between.
-        _client.DefaultRequestHeaders.Authorization = null;
+        // 3. Now act as an ordinary end user (a fresh registered account, not
+        // the admin), in the same process, same run, no restart in between.
+        var userToken = await RegisterUserAsync();
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", userToken);
 
         var sessionResponse = await _client.PostAsync("/api/sessions", content: null);
         sessionResponse.EnsureSuccessStatusCode();
@@ -143,7 +144,9 @@ public sealed class ConfigDrivenInstrumentTests : IClassFixture<MindCheckApiFact
     [Fact]
     public async Task Login_WithWrongPassword_ReturnsUnauthorized()
     {
-        var response = await _client.PostAsJsonAsync("/api/admin/auth/login", new { password = "definitely-wrong" });
+        var response = await _client.PostAsJsonAsync(
+            "/api/auth/login",
+            new { username = MindCheckApiFactory.TestAdminUsername, password = "definitely-wrong" });
 
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
@@ -151,8 +154,19 @@ public sealed class ConfigDrivenInstrumentTests : IClassFixture<MindCheckApiFact
     private async Task<string> LoginAsAdminAsync()
     {
         var response = await _client.PostAsJsonAsync(
-            "/api/admin/auth/login",
-            new { password = MindCheckApiFactory.TestAdminPassword });
+            "/api/auth/login",
+            new { username = MindCheckApiFactory.TestAdminUsername, password = MindCheckApiFactory.TestAdminPassword });
+        response.EnsureSuccessStatusCode();
+        var body = await response.Content.ReadFromJsonAsync<JsonElement>();
+        return body.GetProperty("token").GetString()!;
+    }
+
+    private async Task<string> RegisterUserAsync()
+    {
+        var username = $"user-{Guid.NewGuid():N}";
+        var response = await _client.PostAsJsonAsync(
+            "/api/auth/register",
+            new { username, password = "correcthorsebattery" });
         response.EnsureSuccessStatusCode();
         var body = await response.Content.ReadFromJsonAsync<JsonElement>();
         return body.GetProperty("token").GetString()!;

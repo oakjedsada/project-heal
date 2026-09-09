@@ -6,7 +6,7 @@ using MindCheck.Application.UseCases.Admin;
 namespace MindCheck.Api.Controllers.Admin;
 
 [ApiController]
-[Authorize]
+[Authorize(Roles = "Admin")]
 [Route("api/admin/dashboard")]
 public sealed class AdminDashboardController : ControllerBase
 {

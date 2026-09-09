@@ -10,7 +10,9 @@ using MindCheck.Api.HelpResources;
 using MindCheck.Application.Abstractions;
 using MindCheck.Application.UseCases;
 using MindCheck.Application.UseCases.Admin;
+using MindCheck.Domain.Entities;
 using MindCheck.Domain.Evaluation;
+using MindCheck.Domain.ValueObjects;
 using MindCheck.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,7 +23,7 @@ builder.Services.AddSwaggerGen(options =>
 {
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
-        Description = "JWT from POST /api/admin/auth/login. Enter as: Bearer {token}",
+        Description = "JWT from POST /api/auth/login. Enter as: Bearer {token}",
         Name = "Authorization",
         In = ParameterLocation.Header,
         Type = SecuritySchemeType.ApiKey,
@@ -62,10 +64,15 @@ builder.Services.AddScoped<IRiskEvaluator, RiskEvaluator>();
 builder.Services.AddScoped<IAssessmentFlowEngine, AssessmentFlowEngine>();
 builder.Services.AddScoped<IHelpResourceProvider, ConfigurationHelpResourceProvider>();
 
+builder.Services.AddSingleton<IPasswordHasher, PasswordHasherAdapter>();
+builder.Services.AddScoped<IAuthTokenGenerator, JwtAuthTokenGenerator>();
+
 builder.Services.AddScoped<StartSessionUseCase>();
 builder.Services.AddScoped<GetNextQuestionUseCase>();
 builder.Services.AddScoped<SubmitAnswerUseCase>();
 builder.Services.AddScoped<GetResultUseCase>();
+builder.Services.AddScoped<RegisterUserUseCase>();
+builder.Services.AddScoped<LoginUseCase>();
 
 builder.Services.AddScoped<CreateInstrumentUseCase>();
 builder.Services.AddScoped<ListInstrumentsUseCase>();
@@ -74,29 +81,33 @@ builder.Services.AddScoped<CreateFlowTransitionUseCase>();
 builder.Services.AddScoped<ListFlowTransitionsUseCase>();
 builder.Services.AddScoped<DeleteFlowTransitionUseCase>();
 builder.Services.AddScoped<GetDashboardStatsUseCase>();
+builder.Services.AddScoped<ListUsersUseCase>();
+builder.Services.AddScoped<CreateUserUseCase>();
+builder.Services.AddScoped<ChangeUserRoleUseCase>();
+builder.Services.AddScoped<DeleteUserUseCase>();
 
-builder.Services.Configure<AdminAuthOptions>(builder.Configuration.GetSection(AdminAuthOptions.SectionName));
+builder.Services.Configure<AuthOptions>(builder.Configuration.GetSection(AuthOptions.SectionName));
 
 // Bound lazily via IOptions (resolved the first time the JWT handler actually
 // needs it, i.e. per-request, after the host — and any test config overrides
-// — are fully built). Reading AdminAuthOptions eagerly here, before Build(),
+// — are fully built). Reading AuthOptions eagerly here, before Build(),
 // would freeze in whatever value existed at registration time; see ADR 0006
 // for the same mistake with the DB connection string.
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer();
 
 builder.Services.AddOptions<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme)
-    .Configure<IOptions<AdminAuthOptions>>((jwtOptions, adminAuthOptionsAccessor) =>
+    .Configure<IOptions<AuthOptions>>((jwtOptions, authOptionsAccessor) =>
     {
-        var adminAuthOptions = adminAuthOptionsAccessor.Value;
+        var authOptions = authOptionsAccessor.Value;
         jwtOptions.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
-            ValidIssuer = adminAuthOptions.Issuer,
+            ValidIssuer = authOptions.Issuer,
             ValidateAudience = true,
-            ValidAudience = adminAuthOptions.Audience,
+            ValidAudience = authOptions.Audience,
             ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(adminAuthOptions.JwtSigningKey)),
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authOptions.JwtSigningKey)),
             ValidateLifetime = true,
         };
     });
@@ -111,6 +122,28 @@ using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<MindCheckDbContext>();
     db.Database.Migrate();
+
+    // First-boot bootstrap: the shared-password admin login is gone, so the
+    // only way an Admin account ever comes to exist is this one-time seed
+    // when the Users table is empty. Afterward, admins are managed entirely
+    // through AdminUsersController — these config values are never read again.
+    var userRepository = scope.ServiceProvider.GetRequiredService<IUserRepository>();
+    if (!await userRepository.AnyAsync(CancellationToken.None))
+    {
+        var authOptions = scope.ServiceProvider.GetRequiredService<IOptions<AuthOptions>>().Value;
+        if (!string.IsNullOrWhiteSpace(authOptions.BootstrapAdminUsername) &&
+            !string.IsNullOrWhiteSpace(authOptions.BootstrapAdminPassword))
+        {
+            var passwordHasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher>();
+            var admin = new User(
+                new UserId(Guid.NewGuid()),
+                authOptions.BootstrapAdminUsername,
+                passwordHasher.Hash(authOptions.BootstrapAdminPassword),
+                UserRole.Admin,
+                DateTimeOffset.UtcNow);
+            await userRepository.AddAsync(admin, CancellationToken.None);
+        }
+    }
 }
 
 app.UseExceptionHandler();

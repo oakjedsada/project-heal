@@ -30,7 +30,7 @@ graph TD
     Infra["MindCheck.Infrastructure<br/>EF Core, repositories, migrations, seed data"]
     DB[(PostgreSQL)]
 
-    Client -->|HTTP/JSON, JWT bearer for /admin/*| Api
+    Client -->|HTTP/JSON, JWT bearer for every request| Api
     Api --> App
     Api --> Infra
     Infra -.implements interfaces from.-> App
@@ -64,6 +64,7 @@ erDiagram
     QUESTIONS ||--o{ RESPONSES : "answered via"
     CHOICES ||--o{ RESPONSES : "chosen as"
     INSTRUMENTS ||--o{ RESULTS : "scored as"
+    USERS ||--o{ SESSIONS : "started by"
 
     INSTRUMENTS {
         int id PK
@@ -114,10 +115,18 @@ erDiagram
     }
     SESSIONS {
         uuid id PK
+        uuid user_id FK
         string anon_token
         datetime started_at
         datetime consent_at
         string current_state
+    }
+    USERS {
+        uuid id PK
+        string username
+        string password_hash
+        string role
+        datetime created_at
     }
     RESPONSES {
         int id PK
@@ -146,7 +155,7 @@ docker compose up --build
 
 - Client: http://localhost:18081
 - Api + Swagger: http://localhost:18080/swagger
-- Admin login (this compose file only, not a real secret): `local-docker-admin-password`
+- Bootstrap admin login (this compose file only, not a real secret): username `admin`, password `local-docker-admin-password` — seeded once at first startup; after that, manage admins via the "จัดการผู้ใช้" (user management) admin page, not this config value
 
 Or run the .NET side locally against just a containerized Postgres:
 
@@ -187,13 +196,23 @@ project, not an afterthought.
   the engine end to end. Real cut-offs need a real public reference, not an
   AI's guess at clinical thresholds.
 
-**Auth is intentionally minimal, not production-grade** ([ADR 0012](docs/adr/0012-admin-auth-single-password-jwt.md)):
-- One shared password for all of `/admin/*`, no per-user accounts, no
-  lockout after failed attempts, no rate limiting on the login endpoint.
-- JWTs aren't revocable — a leaked token stays valid until it expires (8h
-  default). No refresh tokens, no "log out everywhere."
-- This is fine for keeping casual visitors out of a portfolio demo. It is
-  not fine for anything holding real user data.
+**Real accounts now exist, but auth is still not production-grade**
+([ADR 0014](docs/adr/0014-unified-user-accounts-with-roles.md), supersedes
+[ADR 0012](docs/adr/0012-admin-auth-single-password-jwt.md)):
+- People taking the assessment and admins share one `Users` table with a
+  `Role` (`Admin`/`User`), real per-user passwords hashed via
+  `Microsoft.Extensions.Identity.Core`'s `PasswordHasher<T>` — not the old
+  single shared plaintext password.
+- Still missing: no lockout after failed login attempts, no rate limiting on
+  `/api/auth/login` or `/api/auth/register` (anyone can script-create many
+  named accounts).
+- JWTs still aren't revocable — a leaked token stays valid until it expires
+  (8h default). No refresh tokens, no "log out everywhere."
+- This is fine for a portfolio demo's threat model. It is not fine for
+  anything holding real user data.
+- **The app's earlier "no need to reveal your identity" anonymity pitch is
+  gone on purpose** — taking the assessment now requires a real account. This
+  is a deliberate product trade-off (see ADR 0014), not an oversight.
 
 **Operational gaps:**
 - No CI pipeline — tests are run manually (`dotnet test`), not on push.
@@ -201,7 +220,7 @@ project, not an afterthought.
   real multi-instance deploy would need a separate migration step to avoid
   concurrent-migration races.
 - No rate limiting or abuse protection on the public session endpoints —
-  anyone can create unlimited anonymous sessions.
+  a registered user can still start unlimited sessions.
 - No admin audit log — nothing records *who* created an instrument or
   deleted a flow transition, only that it happened.
 - The admin UI can create instruments and flow transitions but not edit or

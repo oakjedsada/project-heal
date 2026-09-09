@@ -12,7 +12,7 @@ end, including the sample-data button reaching the emergency page.
 
 - Client: http://localhost:18081
 - Api + Swagger: http://localhost:18080/swagger
-- Admin login password (this compose file only): `local-docker-admin-password`
+- Bootstrap admin login (this compose file only): username `admin`, password `local-docker-admin-password` — used once to seed the first admin account; manage further admins via the in-app user management page afterward
 
 `db` alone (for local `dotnet run` against a real Postgres instead of the full
 container stack) is still `docker compose up -d db`, unchanged from earlier
@@ -32,8 +32,8 @@ these steps can't be done on your behalf without your login.
    Dockerfile needs the repo root as build context — it copies sibling
    projects). Set these variables:
    - `ConnectionStrings__MindCheck` = `Host=${{Postgres.PGHOST}};Port=${{Postgres.PGPORT}};Database=${{Postgres.PGDATABASE}};Username=${{Postgres.PGUSER}};Password=${{Postgres.PGPASSWORD}}`
-   - `AdminAuth__Password` = a real password, not the dev placeholder
-   - `AdminAuth__JwtSigningKey` = a random string, 32+ bytes
+   - `Auth__JwtSigningKey` = a random string, 32+ bytes
+   - `Auth__BootstrapAdminUsername` / `Auth__BootstrapAdminPassword` = a real username and password, not the dev placeholders — only used once, to seed the first admin account when the `users` table is empty
    - `Cors__AllowedOrigins__0` = the client service's public URL (see step 4)
    - `EmergencyHelpResources__0__Label` / `__Contact` = real crisis line info before this is shown to anyone for real
 
@@ -54,5 +54,5 @@ these steps can't be done on your behalf without your login.
 - Every scoring cut-off and risk threshold in `MindCheck.Infrastructure/Seed/SeedData.cs`
   is dummy data (`PLACEHOLDER-DO-NOT-USE-CLINICALLY`) — replace via the admin
   UI or a new seed before this represents anything real.
-- `AdminAuth` is a single shared password (see [ADR 0012](docs/adr/0012-admin-auth-single-password-jwt.md)) — fine for a portfolio demo, not for a real deployment with real user data.
+- Real per-user accounts with roles now exist (see [ADR 0014](docs/adr/0014-unified-user-accounts-with-roles.md), supersedes [ADR 0012](docs/adr/0012-admin-auth-single-password-jwt.md)), but there's still no login rate limiting, no lockout, and no revocable JWTs — fine for a portfolio demo, not for a real deployment with real user data.
 - `EmergencyHelpResources` in `appsettings.json` is placeholder hotline text.

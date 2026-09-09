@@ -7,7 +7,7 @@ using MindCheck.Domain.ValueObjects;
 namespace MindCheck.Api.Controllers.Admin;
 
 [ApiController]
-[Authorize]
+[Authorize(Roles = "Admin")]
 [Route("api/admin/instruments")]
 public sealed class AdminInstrumentsController : ControllerBase
 {

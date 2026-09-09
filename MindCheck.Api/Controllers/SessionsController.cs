@@ -1,4 +1,6 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using MindCheck.Api.Auth;
 using MindCheck.Application.Dtos;
 using MindCheck.Application.UseCases;
 using MindCheck.Domain.ValueObjects;
@@ -6,6 +8,7 @@ using MindCheck.Domain.ValueObjects;
 namespace MindCheck.Api.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("api/sessions")]
 public sealed class SessionsController : ControllerBase
 {
@@ -30,7 +33,7 @@ public sealed class SessionsController : ControllerBase
     [ProducesResponseType(typeof(StartSessionResponse), StatusCodes.Status201Created)]
     public async Task<ActionResult<StartSessionResponse>> StartSession(CancellationToken cancellationToken)
     {
-        var response = await _startSessionUseCase.ExecuteAsync(cancellationToken);
+        var response = await _startSessionUseCase.ExecuteAsync(User.GetUserId(), cancellationToken);
         return CreatedAtAction(nameof(GetResult), new { id = response.SessionId }, response);
     }
 
@@ -38,7 +41,7 @@ public sealed class SessionsController : ControllerBase
     [ProducesResponseType(typeof(NextStepResponse), StatusCodes.Status200OK)]
     public async Task<ActionResult<NextStepResponse>> GetNext(Guid id, CancellationToken cancellationToken)
     {
-        var response = await _getNextQuestionUseCase.ExecuteAsync(new SessionId(id), cancellationToken);
+        var response = await _getNextQuestionUseCase.ExecuteAsync(User.GetUserId(), new SessionId(id), cancellationToken);
         return Ok(response);
     }
 
@@ -50,6 +53,7 @@ public sealed class SessionsController : ControllerBase
         CancellationToken cancellationToken)
     {
         await _submitAnswerUseCase.ExecuteAsync(
+            User.GetUserId(),
             new SessionId(id),
             new QuestionId(request.QuestionId),
             new ChoiceId(request.ChoiceId),
@@ -61,7 +65,7 @@ public sealed class SessionsController : ControllerBase
     [ProducesResponseType(typeof(ResultResponse), StatusCodes.Status200OK)]
     public async Task<ActionResult<ResultResponse>> GetResult(Guid id, CancellationToken cancellationToken)
     {
-        var response = await _getResultUseCase.ExecuteAsync(new SessionId(id), cancellationToken);
+        var response = await _getResultUseCase.ExecuteAsync(User.GetUserId(), new SessionId(id), cancellationToken);
         return Ok(response);
     }
 }

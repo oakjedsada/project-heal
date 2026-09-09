@@ -24,4 +24,7 @@ internal static class IdValueConverters
 
     public static ValueConverter<SessionId, Guid> SessionId { get; } =
         new(id => id.Value, value => new SessionId(value));
+
+    public static ValueConverter<UserId, Guid> UserId { get; } =
+        new(id => id.Value, value => new UserId(value));
 }

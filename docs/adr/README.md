@@ -20,6 +20,7 @@ something is shaped the way it is, not just what it is.
 | [0011](0011-instrument-creation-is-one-composite-endpoint.md) | Instrument creation is one composite, transactional endpoint | 4 |
 | [0012](0012-admin-auth-single-password-jwt.md) | Admin auth is a single shared password issuing a JWT (demo-grade, by design) | 4 |
 | [0013](0013-deploy-topology-two-services-plus-cors.md) | Deploy as two independent services (client + api) with CORS | 4 |
+| [0014](0014-unified-user-accounts-with-roles.md) | Real user accounts, unified into one Users table with a Role (supersedes 0012) | 5 |
 
 Two lessons repeat on purpose (0006 and 0009): the same "config read too early"
 mistake happened twice, for two different features, months apart in the

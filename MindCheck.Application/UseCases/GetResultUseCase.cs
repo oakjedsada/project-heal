@@ -24,10 +24,15 @@ public sealed class GetResultUseCase
         _helpResourceProvider = helpResourceProvider;
     }
 
-    public async Task<ResultResponse> ExecuteAsync(SessionId sessionId, CancellationToken cancellationToken)
+    public async Task<ResultResponse> ExecuteAsync(UserId callerUserId, SessionId sessionId, CancellationToken cancellationToken)
     {
         var session = await _sessionRepository.GetByIdAsync(sessionId, cancellationToken)
             ?? throw new SessionNotFoundException(sessionId);
+
+        if (session.UserId != callerUserId)
+        {
+            throw new SessionAccessDeniedException(sessionId);
+        }
 
         var results = await _resultRepository.GetBySessionIdAsync(sessionId, cancellationToken);
 

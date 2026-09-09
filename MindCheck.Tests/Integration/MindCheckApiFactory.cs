@@ -18,6 +18,7 @@ public sealed class MindCheckApiFactory : WebApplicationFactory<Program>, IAsync
         .WithPassword("mindcheck")
         .Build();
 
+    public const string TestAdminUsername = "integration-test-admin";
     public const string TestAdminPassword = "integration-test-admin-password";
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
@@ -27,8 +28,9 @@ public sealed class MindCheckApiFactory : WebApplicationFactory<Program>, IAsync
             configBuilder.AddInMemoryCollection(new Dictionary<string, string?>
             {
                 ["ConnectionStrings:MindCheck"] = _container.GetConnectionString(),
-                ["AdminAuth:Password"] = TestAdminPassword,
-                ["AdminAuth:JwtSigningKey"] = "integration-test-signing-key-at-least-32-bytes-long",
+                ["Auth:JwtSigningKey"] = "integration-test-signing-key-at-least-32-bytes-long",
+                ["Auth:BootstrapAdminUsername"] = TestAdminUsername,
+                ["Auth:BootstrapAdminPassword"] = TestAdminPassword,
             });
         });
     }

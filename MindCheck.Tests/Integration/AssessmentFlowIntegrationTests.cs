@@ -1,3 +1,4 @@
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
 using FluentAssertions;
@@ -9,7 +10,7 @@ namespace MindCheck.Tests.Integration;
 // state machine: ST-5 -> 2Q (negative) -> done; ST-5 -> 2Q (positive) -> 9Q
 // (item 9 negative) -> done; and ST-5 -> 2Q (positive) -> 9Q (item 9 positive)
 // -> 8Q (risk item positive) -> emergency.
-public sealed class AssessmentFlowIntegrationTests : IClassFixture<MindCheckApiFactory>
+public sealed class AssessmentFlowIntegrationTests : IClassFixture<MindCheckApiFactory>, IAsyncLifetime
 {
     private static readonly int[] St5QuestionIds = { 1, 2, 3, 4, 5 };
     private static readonly int[] NineQQuestionIds = Enumerable.Range(8, 9).ToArray();
@@ -25,6 +26,20 @@ public sealed class AssessmentFlowIntegrationTests : IClassFixture<MindCheckApiF
     {
         _client = factory.CreateClient();
     }
+
+    public async Task InitializeAsync()
+    {
+        var username = $"user-{Guid.NewGuid():N}";
+        var response = await _client.PostAsJsonAsync(
+            "/api/auth/register",
+            new { username, password = "correcthorsebattery" });
+        response.EnsureSuccessStatusCode();
+        var body = await response.Content.ReadFromJsonAsync<JsonElement>();
+        var token = body.GetProperty("token").GetString()!;
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+    }
+
+    public Task DisposeAsync() => Task.CompletedTask;
 
     [Fact]
     public async Task Flow_2QNegative_CompletesAfter2QWithTwoResults()

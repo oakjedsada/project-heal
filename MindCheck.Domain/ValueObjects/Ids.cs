@@ -7,3 +7,5 @@ public readonly record struct QuestionId(int Value);
 public readonly record struct ChoiceId(int Value);
 
 public readonly record struct SessionId(Guid Value);
+
+public readonly record struct UserId(Guid Value);

@@ -1,6 +1,6 @@
 # ADR 0012: Admin auth is a single shared password issuing a JWT
 
-**Status:** Accepted
+**Status:** Superseded by [ADR 0014](0014-unified-user-accounts-with-roles.md)
 
 **Context:** The admin area only needs to keep casual visitors out of a
 portfolio demo — not withstand a real attacker. No user accounts or roles

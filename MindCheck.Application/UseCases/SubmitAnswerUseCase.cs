@@ -41,6 +41,7 @@ public sealed class SubmitAnswerUseCase
     }
 
     public async Task ExecuteAsync(
+        UserId callerUserId,
         SessionId sessionId,
         QuestionId questionId,
         ChoiceId choiceId,
@@ -48,6 +49,11 @@ public sealed class SubmitAnswerUseCase
     {
         var session = await _sessionRepository.GetByIdAsync(sessionId, cancellationToken)
             ?? throw new SessionNotFoundException(sessionId);
+
+        if (session.UserId != callerUserId)
+        {
+            throw new SessionAccessDeniedException(sessionId);
+        }
 
         if (session.State.CurrentInstrumentId is not { } currentInstrumentId)
         {

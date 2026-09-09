@@ -11,6 +11,7 @@ public sealed class SessionConfiguration : IEntityTypeConfiguration<Session>
     {
         builder.HasKey(s => s.Id);
         builder.Property(s => s.Id).HasConversion(IdValueConverters.SessionId).ValueGeneratedNever();
+        builder.Property(s => s.UserId).HasConversion(IdValueConverters.UserId).IsRequired();
         builder.Property(s => s.AnonToken).IsRequired().HasMaxLength(64);
         builder.Property(s => s.StartedAt).IsRequired();
         builder.Property(s => s.ConsentAt);
@@ -21,5 +22,6 @@ public sealed class SessionConfiguration : IEntityTypeConfiguration<Session>
             .IsRequired();
 
         builder.HasIndex(s => s.AnonToken).IsUnique();
+        builder.HasIndex(s => s.UserId);
     }
 }

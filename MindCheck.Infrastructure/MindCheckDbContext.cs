@@ -19,6 +19,7 @@ public sealed class MindCheckDbContext : DbContext
     public DbSet<Session> Sessions => Set<Session>();
     public DbSet<Response> Responses => Set<Response>();
     public DbSet<Result> Results => Set<Result>();
+    public DbSet<User> Users => Set<User>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

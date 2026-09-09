@@ -21,8 +21,9 @@ services:
       dockerfile: MindCheck.Api/Dockerfile
     environment:
       ConnectionStrings__MindCheck: "Host=db;Port=5432;Database=mindcheck;Username=postgres;Password=postgres"
-      AdminAuth__Password: "local-docker-admin-password"
-      AdminAuth__JwtSigningKey: "local-docker-jwt-signing-key-at-least-32-bytes-long"
+      Auth__JwtSigningKey: "local-docker-jwt-signing-key-at-least-32-bytes-long"
+      Auth__BootstrapAdminUsername: "admin"
+      Auth__BootstrapAdminPassword: "local-docker-admin-password"
       Cors__AllowedOrigins__0: "http://localhost:18081"
     ports:
       - "18080:8080"

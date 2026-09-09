@@ -21,10 +21,15 @@ public sealed class GetNextQuestionUseCase
         _responseRepository = responseRepository;
     }
 
-    public async Task<NextStepResponse> ExecuteAsync(SessionId sessionId, CancellationToken cancellationToken)
+    public async Task<NextStepResponse> ExecuteAsync(UserId callerUserId, SessionId sessionId, CancellationToken cancellationToken)
     {
         var session = await _sessionRepository.GetByIdAsync(sessionId, cancellationToken)
             ?? throw new SessionNotFoundException(sessionId);
+
+        if (session.UserId != callerUserId)
+        {
+            throw new SessionAccessDeniedException(sessionId);
+        }
 
         if (session.State.CurrentInstrumentId is not { } currentInstrumentId)
         {
