@@ -1,4 +1,5 @@
 import { createContext, useContext, type ReactNode } from 'react'
+import { useAuth } from './AuthContext'
 import { useAssessmentSession } from './useAssessmentSession'
 
 type SessionContextValue = ReturnType<typeof useAssessmentSession>
@@ -14,7 +15,8 @@ const SessionContext = createContext<SessionContextValue | null>(null)
 // real browser session (a true page load), which is the resilience the
 // feature is actually meant to provide.
 export function SessionProvider({ children }: { children: ReactNode }) {
-  const value = useAssessmentSession()
+  const { authHeader } = useAuth()
+  const value = useAssessmentSession(authHeader)
   return <SessionContext.Provider value={value}>{children}</SessionContext.Provider>
 }
 

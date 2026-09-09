@@ -5,12 +5,15 @@
 }
 
 body {
-  @apply bg-slate-50 text-slate-900 antialiased;
+  @apply min-h-screen bg-white text-stone-800 antialiased;
+  font-family: "IBM Plex Sans Thai", ui-sans-serif, system-ui, sans-serif;
+  background-image: radial-gradient(circle at top, theme(colors.pink.50) 0%, theme(colors.white) 55%);
+  background-attachment: fixed;
 }
 
 /* Visible keyboard focus ring on every interactive element, regardless of
    whether the browser/OS would otherwise suppress it. */
 :focus-visible {
-  outline: 3px solid #1d4ed8;
+  outline: 3px solid theme(colors.pink.500);
   outline-offset: 2px;
 }

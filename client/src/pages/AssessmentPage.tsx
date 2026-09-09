@@ -58,13 +58,13 @@ export function AssessmentPage() {
       <ProgressIndicator answeredCount={answeredCount} isComplete={false} />
 
       {error && (
-        <p role="alert" className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-800">
+        <p role="alert" className="rounded-xl bg-red-50 px-3 py-2 text-sm text-red-800">
           {error}
         </p>
       )}
 
       {rejectedNotice && (
-        <p role="alert" className="rounded-md bg-amber-50 px-3 py-2 text-sm text-amber-900">
+        <p role="alert" className="rounded-xl bg-amber-50 px-3 py-2 text-sm text-amber-900">
           คำตอบข้อนี้ถูกประมวลผลไปแล้วและไม่สามารถแก้ไขได้อีก
         </p>
       )}
@@ -77,7 +77,7 @@ export function AssessmentPage() {
           onSelect={handleSelect}
         />
       ) : (
-        <p className="text-slate-600">กำลังโหลดคำถาม...</p>
+        <p className="text-stone-500">กำลังโหลดคำถาม...</p>
       )}
 
       <div className="flex justify-between">
@@ -85,7 +85,7 @@ export function AssessmentPage() {
           type="button"
           onClick={goBack}
           disabled={!canGoBack || isLoading}
-          className="min-h-11 rounded-md border border-slate-300 px-4 py-2 text-slate-700 disabled:opacity-40"
+          className="min-h-11 rounded-full border border-stone-300 bg-white px-5 py-2 text-stone-700 transition-colors hover:border-pink-200 hover:bg-pink-50/50 disabled:opacity-40"
         >
           ย้อนกลับ
         </button>
@@ -93,13 +93,13 @@ export function AssessmentPage() {
           type="button"
           onClick={goForward}
           disabled={!canGoForward || isLoading}
-          className="min-h-11 rounded-md border border-slate-300 px-4 py-2 text-slate-700 disabled:opacity-40"
+          className="min-h-11 rounded-full border border-stone-300 bg-white px-5 py-2 text-stone-700 transition-colors hover:border-pink-200 hover:bg-pink-50/50 disabled:opacity-40"
         >
           ถัดไป
         </button>
       </div>
 
-      <p className="text-center text-xs text-slate-400">
+      <p className="text-center text-xs text-stone-400">
         {isAtTail ? 'กำลังทำข้อล่าสุด' : `กำลังดูข้อที่ ${viewIndex + 1} จากทั้งหมด ${history.length} ข้อที่ทำมา`}
       </p>
     </div>

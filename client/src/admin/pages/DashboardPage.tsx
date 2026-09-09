@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
 import {
   Bar,
   BarChart,
@@ -14,11 +13,12 @@ import {
 } from 'recharts'
 import { apiClient } from '../../api/client'
 import type { components } from '../../api/schema'
-import { useAdminAuth } from '../AdminAuthContext'
+import { useAuth } from '../../state/AuthContext'
+import { AdminHeader } from '../components/AdminHeader'
 
 type DashboardStatsDto = components['schemas']['DashboardStatsDto']
 
-const BAR_COLORS = ['#1d4ed8', '#0891b2', '#16a34a', '#ca8a04', '#dc2626', '#7c3aed']
+const BAR_COLORS = ['#ec4899', '#f59e0b', '#8b5cf6', '#0ea5e9', '#65a30d', '#f97316']
 
 function pivotLevelBreakdown(stats: DashboardStatsDto) {
   const items = stats.levelBreakdown ?? []
@@ -37,7 +37,7 @@ function pivotLevelBreakdown(stats: DashboardStatsDto) {
 }
 
 export function DashboardPage() {
-  const { authHeader } = useAdminAuth()
+  const { authHeader } = useAuth()
   const [stats, setStats] = useState<DashboardStatsDto | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -61,61 +61,51 @@ export function DashboardPage() {
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-8">
-      <div className="mb-4 flex items-center justify-between">
-        <h1 className="text-xl font-semibold text-slate-900">สถิติรวม (ไม่ระบุตัวตน)</h1>
-        <div className="flex gap-4 text-sm text-blue-700">
-          <Link to="/admin/instruments/new" className="underline">
-            สร้างแบบประเมิน
-          </Link>
-          <Link to="/admin/flow-transitions" className="underline">
-            เส้นทางแบบประเมิน
-          </Link>
-        </div>
-      </div>
+      <AdminHeader title="สถิติรวม (ไม่ระบุตัวตน)" />
 
-      {isLoading && <p className="text-slate-600">กำลังโหลด...</p>}
-      {error && <p className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-800">{error}</p>}
+      {isLoading && <p className="text-stone-500">กำลังโหลด...</p>}
+      {error && <p className="rounded-xl bg-red-50 px-3 py-2 text-sm text-red-800">{error}</p>}
 
       {!isLoading && !error && (
         <div className="flex flex-col gap-6">
-          <section className="rounded-lg border border-slate-200 bg-white p-4">
-            <h2 className="mb-3 font-medium text-slate-900">จำนวน session แยกตามระดับผล</h2>
+          <section className="rounded-2xl border border-pink-100 bg-white p-4 shadow-sm shadow-pink-900/5">
+            <h2 className="mb-3 font-medium text-stone-900">จำนวน session แยกตามระดับผล</h2>
             {hasBreakdown ? (
               <div className="h-72 w-full">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={rows}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="instrument" />
-                    <YAxis allowDecimals={false} />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e7e5e4" />
+                    <XAxis dataKey="instrument" stroke="#78716c" />
+                    <YAxis allowDecimals={false} stroke="#78716c" />
                     <Tooltip />
                     <Legend />
                     {levels.map((level, i) => (
-                      <Bar key={level} dataKey={level} fill={BAR_COLORS[i % BAR_COLORS.length]} />
+                      <Bar key={level} dataKey={level} fill={BAR_COLORS[i % BAR_COLORS.length]} radius={[4, 4, 0, 0]} />
                     ))}
                   </BarChart>
                 </ResponsiveContainer>
               </div>
             ) : (
-              <p className="text-sm text-slate-500">ยังไม่มีข้อมูล session ที่ทำแบบประเมินจนจบ</p>
+              <p className="text-sm text-stone-500">ยังไม่มีข้อมูล session ที่ทำแบบประเมินจนจบ</p>
             )}
           </section>
 
-          <section className="rounded-lg border border-slate-200 bg-white p-4">
-            <h2 className="mb-3 font-medium text-slate-900">แนวโน้มจำนวน session รายสัปดาห์</h2>
+          <section className="rounded-2xl border border-pink-100 bg-white p-4 shadow-sm shadow-pink-900/5">
+            <h2 className="mb-3 font-medium text-stone-900">แนวโน้มจำนวน session รายสัปดาห์</h2>
             {hasTrend ? (
               <div className="h-72 w-full">
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={stats!.weeklyTrend!}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="weekStart" />
-                    <YAxis allowDecimals={false} />
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e7e5e4" />
+                    <XAxis dataKey="weekStart" stroke="#78716c" />
+                    <YAxis allowDecimals={false} stroke="#78716c" />
                     <Tooltip />
-                    <Line type="monotone" dataKey="sessionCount" stroke="#1d4ed8" strokeWidth={2} />
+                    <Line type="monotone" dataKey="sessionCount" stroke="#db2777" strokeWidth={2.5} dot={{ fill: '#db2777' }} />
                   </LineChart>
                 </ResponsiveContainer>
               </div>
             ) : (
-              <p className="text-sm text-slate-500">ยังไม่มี session เริ่มต้นเลย</p>
+              <p className="text-sm text-stone-500">ยังไม่มี session เริ่มต้นเลย</p>
             )}
           </section>
         </div>

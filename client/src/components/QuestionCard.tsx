@@ -1,4 +1,5 @@
 import type { QuestionDto } from '../api/types'
+import { CheckIcon } from './icons'
 
 interface QuestionCardProps {
   question: QuestionDto
@@ -11,9 +12,12 @@ export function QuestionCard({ question, selectedChoiceId, disabled, onSelect }:
   const choices = [...(question.choices ?? [])].sort((a, b) => (a.orderNo ?? 0) - (b.orderNo ?? 0))
 
   return (
-    <fieldset className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm" disabled={disabled}>
-      <legend className="mb-4 text-lg font-medium text-slate-900">{question.text}</legend>
-      <div className="flex flex-col gap-2">
+    <fieldset
+      className="rounded-2xl border border-pink-100 bg-white p-5 shadow-sm shadow-pink-900/5"
+      disabled={disabled}
+    >
+      <legend className="mb-4 text-lg font-medium leading-relaxed text-stone-900">{question.text}</legend>
+      <div className="flex flex-col gap-2.5">
         {choices.map((choice) => {
           const id = `choice-${choice.choiceId}`
           const isSelected = choice.choiceId === selectedChoiceId
@@ -21,10 +25,10 @@ export function QuestionCard({ question, selectedChoiceId, disabled, onSelect }:
             <label
               key={choice.choiceId}
               htmlFor={id}
-              className={`flex min-h-11 cursor-pointer items-center gap-3 rounded-md border px-4 py-3 text-base transition-colors ${
+              className={`flex min-h-11 cursor-pointer items-center gap-3 rounded-xl border px-4 py-3 text-base transition-all ${
                 isSelected
-                  ? 'border-blue-700 bg-blue-50 text-blue-900'
-                  : 'border-slate-300 bg-white text-slate-800 hover:bg-slate-50'
+                  ? 'border-pink-500 bg-pink-50 text-pink-900 ring-1 ring-pink-500'
+                  : 'border-stone-200 bg-white text-stone-700 hover:border-pink-200 hover:bg-pink-50/40'
               } ${disabled ? 'cursor-not-allowed opacity-60' : ''}`}
             >
               <input
@@ -35,8 +39,15 @@ export function QuestionCard({ question, selectedChoiceId, disabled, onSelect }:
                 checked={isSelected}
                 disabled={disabled}
                 onChange={() => onSelect(choice.choiceId!)}
-                className="h-5 w-5 accent-blue-700"
+                className="sr-only"
               />
+              <span
+                className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 transition-colors ${
+                  isSelected ? 'border-pink-500 bg-pink-500 text-white' : 'border-stone-300 text-transparent'
+                }`}
+              >
+                <CheckIcon className="h-3 w-3" />
+              </span>
               <span>{choice.label}</span>
             </label>
           )

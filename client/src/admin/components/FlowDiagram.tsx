@@ -94,13 +94,13 @@ export function FlowDiagram({ instruments, transitions }: FlowDiagramProps) {
   return (
     <svg
       viewBox={`0 0 ${width} ${height}`}
-      className="w-full rounded-lg border border-slate-200 bg-white"
+      className="w-full rounded-2xl border border-pink-100 bg-white"
       role="img"
       aria-label="แผนภาพเส้นทางแบบประเมิน"
     >
       <defs>
         <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
-          <path d="M0,0 L8,4 L0,8 z" fill="#1d4ed8" />
+          <path d="M0,0 L8,4 L0,8 z" fill="#ec4899" />
         </marker>
       </defs>
 
@@ -123,12 +123,12 @@ export function FlowDiagram({ instruments, transitions }: FlowDiagramProps) {
             <path
               d={`M ${x1} ${y1} C ${midX} ${y1}, ${midX} ${y2}, ${x2} ${y2}`}
               fill="none"
-              stroke="#1d4ed8"
+              stroke="#ec4899"
               strokeWidth={2}
               markerEnd="url(#arrow)"
             />
             <rect x={midX - 55} y={midY - 10} width={110} height={20} fill="white" opacity={0.9} />
-            <text x={midX} y={midY + 4} textAnchor="middle" fontSize="11" fill="#1e293b">
+            <text x={midX} y={midY + 4} textAnchor="middle" fontSize="11" fill="#44403c">
               {conditionLabel(t)}
             </text>
           </g>
@@ -142,9 +142,9 @@ export function FlowDiagram({ instruments, transitions }: FlowDiagramProps) {
             y={node.y}
             width={NODE_WIDTH}
             height={NODE_HEIGHT}
-            rx={8}
-            fill={node.key === START_KEY ? '#0f172a' : '#eff6ff'}
-            stroke={node.key === START_KEY ? '#0f172a' : '#1d4ed8'}
+            rx={12}
+            fill={node.key === START_KEY ? '#292524' : '#fdf2f8'}
+            stroke={node.key === START_KEY ? '#292524' : '#ec4899'}
             strokeWidth={1.5}
           />
           <text
@@ -153,7 +153,7 @@ export function FlowDiagram({ instruments, transitions }: FlowDiagramProps) {
             textAnchor="middle"
             fontSize="13"
             fontWeight={600}
-            fill={node.key === START_KEY ? 'white' : '#1e3a8a'}
+            fill={node.key === START_KEY ? 'white' : '#be185d'}
           >
             {node.label}
           </text>

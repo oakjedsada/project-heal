@@ -12,13 +12,18 @@ export function ProgressIndicator({ answeredCount, isComplete }: ProgressIndicat
 
   return (
     <div className="mb-4">
-      <div className="h-2 w-full overflow-hidden rounded-full bg-slate-200" aria-hidden="true">
-        <div
-          className="h-2 rounded-full bg-blue-700 transition-all duration-300 ease-out"
-          style={{ width: `${widthPercent}%` }}
-        />
+      <div className="flex items-center gap-3">
+        <div className="h-2.5 flex-1 overflow-hidden rounded-full bg-pink-100" aria-hidden="true">
+          <div
+            className="h-2.5 rounded-full bg-gradient-to-r from-pink-400 to-pink-600 transition-all duration-300 ease-out"
+            style={{ width: `${widthPercent}%` }}
+          />
+        </div>
+        <span className="flex h-7 min-w-7 shrink-0 items-center justify-center rounded-full bg-pink-100 px-2 text-xs font-semibold text-pink-700">
+          {isComplete ? '✓' : answeredCount + 1}
+        </span>
       </div>
-      <p className="mt-1 text-sm text-slate-600">
+      <p className="mt-1.5 text-sm text-stone-500">
         {isComplete ? 'ทำแบบประเมินครบแล้ว' : `ข้อที่ ${answeredCount + 1}`}
       </p>
     </div>

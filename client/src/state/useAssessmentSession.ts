@@ -21,7 +21,7 @@ interface AdvanceResult {
   question?: QuestionDto
 }
 
-export function useAssessmentSession() {
+export function useAssessmentSession(authHeader: Record<string, string>) {
   const [sessionId, setSessionIdState] = useState<string | null>(() => loadSessionId())
   const [history, setHistory] = useState<HistoryEntry[]>(() => loadHistory())
   const [viewIndex, setViewIndexState] = useState(() => Math.max(0, loadHistory().length - 1))
@@ -55,6 +55,7 @@ export function useAssessmentSession() {
   const fetchNext = useCallback(async (sid: string): Promise<AdvanceResult> => {
     const { data, error: apiError } = await apiClient.GET('/api/sessions/{id}/next', {
       params: { path: { id: sid } },
+      headers: authHeader,
     })
     if (apiError || !data) {
       throw new Error('ไม่สามารถโหลดคำถามถัดไปได้')
@@ -63,17 +64,18 @@ export function useAssessmentSession() {
       return { kind: 'complete' }
     }
     return { kind: 'question', question: data.question }
-  }, [])
+  }, [authHeader])
 
   const fetchResult = useCallback(async (sid: string): Promise<ResultResponse> => {
     const { data, error: apiError } = await apiClient.GET('/api/sessions/{id}/result', {
       params: { path: { id: sid } },
+      headers: authHeader,
     })
     if (apiError || !data) {
       throw new Error('ไม่สามารถโหลดผลลัพธ์ได้')
     }
     return data
-  }, [])
+  }, [authHeader])
 
   /** Rehydrates from localStorage on mount by reconciling with the server's view of "next". */
   useEffect(() => {
@@ -119,7 +121,7 @@ export function useAssessmentSession() {
     setIsLoading(true)
     setError(null)
     try {
-      const { data, error: apiError } = await apiClient.POST('/api/sessions', {})
+      const { data, error: apiError } = await apiClient.POST('/api/sessions', { headers: authHeader })
       if (apiError || !data) {
         throw new Error('ไม่สามารถเริ่มเซสชันได้')
       }
@@ -141,7 +143,7 @@ export function useAssessmentSession() {
     } finally {
       setIsLoading(false)
     }
-  }, [fetchNext, commitHistory, setSessionId, setViewIndex])
+  }, [fetchNext, commitHistory, setSessionId, setViewIndex, authHeader])
 
   const goBack = useCallback(() => {
     setViewIndex(Math.max(0, viewIndexRef.current - 1))
@@ -170,6 +172,7 @@ export function useAssessmentSession() {
         const { error: apiError, response } = await apiClient.POST('/api/sessions/{id}/answers', {
           params: { path: { id: sid } },
           body: { questionId: entry.question.questionId, choiceId },
+          headers: authHeader,
         })
 
         if (apiError || !response.ok) {
@@ -212,7 +215,7 @@ export function useAssessmentSession() {
         setIsLoading(false)
       }
     },
-    [fetchNext, fetchResult, commitHistory, setViewIndex],
+    [fetchNext, fetchResult, commitHistory, setViewIndex, authHeader],
   )
 
   /** Auto-answers every remaining question at the tail, always picking the

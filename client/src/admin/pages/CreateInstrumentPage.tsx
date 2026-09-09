@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
 import { apiClient } from '../../api/client'
-import { useAdminAuth } from '../AdminAuthContext'
+import { useAuth } from '../../state/AuthContext'
+import { AdminHeader } from '../components/AdminHeader'
 
 interface ChoiceForm {
   label: string
@@ -49,7 +49,7 @@ function emptyRiskRule(): RiskRuleForm {
 const RISK_OPERATORS = ['GreaterThan', 'GreaterThanOrEqual', 'LessThan', 'LessThanOrEqual', 'Equal', 'NotEqual']
 
 export function CreateInstrumentPage() {
-  const { authHeader } = useAdminAuth()
+  const { authHeader } = useAuth()
 
   const [code, setCode] = useState('')
   const [name, setName] = useState('')
@@ -140,32 +140,22 @@ export function CreateInstrumentPage() {
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-8">
-      <div className="mb-4 flex items-center justify-between">
-        <h1 className="text-xl font-semibold text-slate-900">สร้างแบบประเมินใหม่</h1>
-        <div className="flex gap-4 text-sm text-blue-700">
-          <Link to="/admin/dashboard" className="underline">
-            สถิติรวม
-          </Link>
-          <Link to="/admin/flow-transitions" className="underline">
-            เส้นทางแบบประเมิน
-          </Link>
-        </div>
-      </div>
+      <AdminHeader title="สร้างแบบประเมินใหม่" />
 
       {error && (
-        <p role="alert" className="mb-4 rounded-md bg-red-50 px-3 py-2 text-sm text-red-800">
+        <p role="alert" className="mb-4 rounded-xl bg-red-50 px-3 py-2 text-sm text-red-800">
           {error}
         </p>
       )}
       {successMessage && (
-        <p role="status" className="mb-4 rounded-md bg-green-50 px-3 py-2 text-sm text-green-800">
+        <p role="status" className="mb-4 rounded-xl bg-pink-50 px-3 py-2 text-sm text-pink-800">
           {successMessage}
         </p>
       )}
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-        <section className="rounded-lg border border-slate-200 bg-white p-4">
-          <h2 className="mb-3 font-medium text-slate-900">ข้อมูลพื้นฐาน</h2>
+        <section className="rounded-2xl border border-pink-100 bg-white p-4 shadow-sm shadow-pink-900/5">
+          <h2 className="mb-3 font-medium text-stone-900">ข้อมูลพื้นฐาน</h2>
           <div className="grid grid-cols-2 gap-3">
             <Field label="รหัส (code)">
               <input required value={code} onChange={(e) => setCode(e.target.value)} className={inputClass} />
@@ -182,16 +172,16 @@ export function CreateInstrumentPage() {
           </div>
         </section>
 
-        <section className="rounded-lg border border-slate-200 bg-white p-4">
+        <section className="rounded-2xl border border-pink-100 bg-white p-4 shadow-sm shadow-pink-900/5">
           <div className="mb-3 flex items-center justify-between">
-            <h2 className="font-medium text-slate-900">คำถาม</h2>
+            <h2 className="font-medium text-stone-900">คำถาม</h2>
             <button type="button" onClick={addQuestion} className={addButtonClass}>
               + เพิ่มคำถาม
             </button>
           </div>
           <div className="flex flex-col gap-4">
             {questions.map((q, qIndex) => (
-              <div key={qIndex} className="rounded-md border border-slate-200 p-3">
+              <div key={qIndex} className="rounded-xl border border-pink-100 bg-pink-50/30 p-3">
                 <div className="mb-2 flex items-center gap-2">
                   <Field label="ลำดับ" className="w-20">
                     <input
@@ -260,16 +250,16 @@ export function CreateInstrumentPage() {
           </div>
         </section>
 
-        <section className="rounded-lg border border-slate-200 bg-white p-4">
+        <section className="rounded-2xl border border-pink-100 bg-white p-4 shadow-sm shadow-pink-900/5">
           <div className="mb-3 flex items-center justify-between">
-            <h2 className="font-medium text-slate-900">เกณฑ์คะแนน (scoring rules)</h2>
+            <h2 className="font-medium text-stone-900">เกณฑ์คะแนน (scoring rules)</h2>
             <button type="button" onClick={addScoringRule} className={addButtonClass}>
               + เพิ่มช่วงคะแนน
             </button>
           </div>
           <div className="flex flex-col gap-3">
             {scoringRules.map((r, index) => (
-              <div key={index} className="grid grid-cols-6 gap-2 rounded-md border border-slate-200 p-3">
+              <div key={index} className="grid grid-cols-6 gap-2 rounded-xl border border-pink-100 bg-pink-50/30 p-3">
                 <input
                   type="number"
                   placeholder="min"
@@ -317,16 +307,16 @@ export function CreateInstrumentPage() {
           </div>
         </section>
 
-        <section className="rounded-lg border border-slate-200 bg-white p-4">
+        <section className="rounded-2xl border border-pink-100 bg-white p-4 shadow-sm shadow-pink-900/5">
           <div className="mb-3 flex items-center justify-between">
-            <h2 className="font-medium text-slate-900">risk rules (ไม่บังคับ)</h2>
+            <h2 className="font-medium text-stone-900">risk rules (ไม่บังคับ)</h2>
             <button type="button" onClick={addRiskRule} className={addButtonClass}>
               + เพิ่ม risk rule
             </button>
           </div>
           <div className="flex flex-col gap-3">
             {riskRules.map((r, index) => (
-              <div key={index} className="grid grid-cols-5 gap-2 rounded-md border border-slate-200 p-3">
+              <div key={index} className="grid grid-cols-5 gap-2 rounded-xl border border-pink-100 bg-pink-50/30 p-3">
                 <select
                   value={r.questionOrderNo}
                   onChange={(e) => updateRiskRule(index, { questionOrderNo: Number(e.target.value) })}
@@ -373,7 +363,7 @@ export function CreateInstrumentPage() {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="min-h-11 rounded-md bg-blue-700 px-4 py-3 font-medium text-white hover:bg-blue-800 disabled:opacity-60"
+          className="min-h-11 rounded-full bg-pink-500 px-4 py-3 font-medium text-white transition-colors hover:bg-pink-600 disabled:opacity-60"
         >
           {isSubmitting ? 'กำลังบันทึก...' : 'สร้างแบบประเมิน'}
         </button>
@@ -382,13 +372,13 @@ export function CreateInstrumentPage() {
   )
 }
 
-const inputClass = 'min-h-11 rounded-md border border-slate-300 px-2 py-1 text-sm'
-const addButtonClass = 'rounded-md border border-blue-300 px-3 py-1.5 text-sm text-blue-700 hover:bg-blue-50'
-const removeButtonClass = 'rounded-md border border-red-300 px-2 py-1 text-xs text-red-700 hover:bg-red-50'
+const inputClass = 'min-h-11 rounded-lg border border-stone-300 px-2 py-1 text-sm focus:border-pink-400'
+const addButtonClass = 'rounded-lg border border-pink-300 px-3 py-1.5 text-sm text-pink-700 hover:bg-pink-50'
+const removeButtonClass = 'rounded-lg border border-red-300 px-2 py-1 text-xs text-red-700 hover:bg-red-50'
 
 function Field({ label, children, className }: { label: string; children: React.ReactNode; className?: string }) {
   return (
-    <label className={`flex flex-col gap-1 text-sm text-slate-700 ${className ?? ''}`}>
+    <label className={`flex flex-col gap-1 text-sm text-stone-700 ${className ?? ''}`}>
       {label}
       {children}
     </label>

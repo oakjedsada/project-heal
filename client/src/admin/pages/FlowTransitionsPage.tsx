@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
 import { apiClient } from '../../api/client'
 import type { components } from '../../api/schema'
-import { useAdminAuth } from '../AdminAuthContext'
+import { useAuth } from '../../state/AuthContext'
+import { AdminHeader } from '../components/AdminHeader'
 import { FlowDiagram } from '../components/FlowDiagram'
 
 type FlowTransitionDto = components['schemas']['FlowTransitionDto']
@@ -12,7 +12,7 @@ type InstrumentDetailDto = components['schemas']['InstrumentDetailDto']
 const CONDITION_TYPES = ['Always', 'ScoreLevelEquals', 'QuestionScoreAtLeast']
 
 export function FlowTransitionsPage() {
-  const { authHeader } = useAdminAuth()
+  const { authHeader } = useAuth()
 
   const [instruments, setInstruments] = useState<InstrumentSummaryDto[]>([])
   const [transitions, setTransitions] = useState<FlowTransitionDto[]>([])
@@ -101,19 +101,9 @@ export function FlowTransitionsPage() {
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-8">
-      <div className="mb-4 flex items-center justify-between">
-        <h1 className="text-xl font-semibold text-slate-900">เส้นทางแบบประเมิน (flow transitions)</h1>
-        <div className="flex gap-4 text-sm text-blue-700">
-          <Link to="/admin/dashboard" className="underline">
-            สถิติรวม
-          </Link>
-          <Link to="/admin/instruments/new" className="underline">
-            สร้างแบบประเมินใหม่
-          </Link>
-        </div>
-      </div>
+      <AdminHeader title="เส้นทางแบบประเมิน (flow transitions)" />
 
-      {error && <p className="mb-4 rounded-md bg-red-50 px-3 py-2 text-sm text-red-800">{error}</p>}
+      {error && <p className="mb-4 rounded-xl bg-red-50 px-3 py-2 text-sm text-red-800">{error}</p>}
 
       {!isLoading && (
         <div className="mb-6 overflow-x-auto">
@@ -121,10 +111,10 @@ export function FlowTransitionsPage() {
         </div>
       )}
 
-      <section className="mb-6 rounded-lg border border-slate-200 bg-white p-4">
-        <h2 className="mb-3 font-medium text-slate-900">เพิ่มเส้นทางใหม่</h2>
+      <section className="mb-6 rounded-2xl border border-pink-100 bg-white p-4 shadow-sm shadow-pink-900/5">
+        <h2 className="mb-3 font-medium text-stone-900">เพิ่มเส้นทางใหม่</h2>
         <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-3">
-          <label className="flex flex-col gap-1 text-sm text-slate-700">
+          <label className="flex flex-col gap-1 text-sm text-stone-700">
             จาก (จบแบบประเมินไหน)
             <select
               value={fromInstrumentId}
@@ -140,7 +130,7 @@ export function FlowTransitionsPage() {
             </select>
           </label>
 
-          <label className="flex flex-col gap-1 text-sm text-slate-700">
+          <label className="flex flex-col gap-1 text-sm text-stone-700">
             เงื่อนไข
             <select value={conditionType} onChange={(e) => setConditionType(e.target.value)} className={selectClass}>
               {CONDITION_TYPES.map((c) => (
@@ -152,7 +142,7 @@ export function FlowTransitionsPage() {
           </label>
 
           {conditionType === 'ScoreLevelEquals' && (
-            <label className="col-span-2 flex flex-col gap-1 text-sm text-slate-700">
+            <label className="col-span-2 flex flex-col gap-1 text-sm text-stone-700">
               ระดับ (level) ที่ต้องตรงกัน
               <input
                 required
@@ -166,7 +156,7 @@ export function FlowTransitionsPage() {
 
           {conditionType === 'QuestionScoreAtLeast' && (
             <>
-              <label className="flex flex-col gap-1 text-sm text-slate-700">
+              <label className="flex flex-col gap-1 text-sm text-stone-700">
                 คำถาม (ของแบบประเมินต้นทาง)
                 <select value={questionId} onChange={(e) => setQuestionId(e.target.value)} className={selectClass}>
                   <option value="">เลือกคำถาม</option>
@@ -177,7 +167,7 @@ export function FlowTransitionsPage() {
                   ))}
                 </select>
               </label>
-              <label className="flex flex-col gap-1 text-sm text-slate-700">
+              <label className="flex flex-col gap-1 text-sm text-stone-700">
                 threshold (คะแนนขั้นต่ำ)
                 <input
                   required
@@ -190,7 +180,7 @@ export function FlowTransitionsPage() {
             </>
           )}
 
-          <label className="col-span-2 flex flex-col gap-1 text-sm text-slate-700">
+          <label className="col-span-2 flex flex-col gap-1 text-sm text-stone-700">
             ไป (แบบประเมินปลายทาง)
             <select value={toInstrumentId} onChange={(e) => setToInstrumentId(e.target.value)} className={selectClass}>
               <option value="">เลือกแบบประเมิน</option>
@@ -206,19 +196,19 @@ export function FlowTransitionsPage() {
 
           <button
             type="submit"
-            className="col-span-2 min-h-11 rounded-md bg-blue-700 px-4 py-2 font-medium text-white hover:bg-blue-800"
+            className="col-span-2 min-h-11 rounded-full bg-pink-500 px-4 py-2 font-medium text-white transition-colors hover:bg-pink-600"
           >
             เพิ่มเส้นทาง
           </button>
         </form>
       </section>
 
-      <section className="rounded-lg border border-slate-200 bg-white p-4">
-        <h2 className="mb-3 font-medium text-slate-900">เส้นทางทั้งหมด</h2>
+      <section className="rounded-2xl border border-pink-100 bg-white p-4 shadow-sm shadow-pink-900/5">
+        <h2 className="mb-3 font-medium text-stone-900">เส้นทางทั้งหมด</h2>
         <ul className="flex flex-col gap-2 text-sm">
           {transitions.map((t) => (
-            <li key={t.id} className="flex items-center justify-between rounded-md border border-slate-100 px-3 py-2">
-              <span>
+            <li key={t.id} className="flex items-center justify-between rounded-xl border border-stone-100 px-3 py-2">
+              <span className="text-stone-700">
                 {t.fromInstrumentCode ?? 'เริ่มต้น session'} → {t.fromInstrumentCode ? '' : ''}
                 {t.toInstrumentCode} ({t.conditionType}
                 {t.conditionValue ? `: ${t.conditionValue}` : ''})
@@ -226,7 +216,7 @@ export function FlowTransitionsPage() {
               <button
                 type="button"
                 onClick={() => handleDelete(t.id!)}
-                className="rounded-md border border-red-300 px-2 py-1 text-xs text-red-700 hover:bg-red-50"
+                className="rounded-lg border border-red-300 px-2 py-1 text-xs text-red-700 hover:bg-red-50"
               >
                 ลบ
               </button>
@@ -238,4 +228,4 @@ export function FlowTransitionsPage() {
   )
 }
 
-const selectClass = 'min-h-11 rounded-md border border-slate-300 px-2 py-1 text-sm'
+const selectClass = 'min-h-11 rounded-lg border border-stone-300 px-2 py-1 text-sm focus:border-pink-400'

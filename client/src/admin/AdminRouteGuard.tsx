@@ -1,11 +1,14 @@
 import type { ReactNode } from 'react'
 import { Navigate } from 'react-router-dom'
-import { useAdminAuth } from './AdminAuthContext'
+import { useAuth } from '../state/AuthContext'
 
 export function AdminRouteGuard({ children }: { children: ReactNode }) {
-  const { token } = useAdminAuth()
+  const { token, user } = useAuth()
   if (!token) {
-    return <Navigate to="/admin/login" replace />
+    return <Navigate to="/login" replace />
+  }
+  if (user?.role !== 'Admin') {
+    return <Navigate to="/" replace />
   }
   return <>{children}</>
 }

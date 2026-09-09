@@ -24,36 +24,36 @@ export function ResultPage() {
 
   return (
     <div className="flex flex-col gap-4">
-      <h1 className="text-2xl font-semibold text-slate-900">ผลการประเมิน</h1>
+      <h1 className="text-2xl font-semibold tracking-tight text-stone-900">ผลการประเมิน</h1>
 
-      {isLoading && <p className="text-slate-600">กำลังโหลดผลลัพธ์...</p>}
+      {isLoading && <p className="text-stone-500">กำลังโหลดผลลัพธ์...</p>}
 
       {error && (
-        <p role="alert" className="rounded-md bg-red-50 px-3 py-2 text-sm text-red-800">
+        <p role="alert" className="rounded-xl bg-red-50 px-3 py-2 text-sm text-red-800">
           {error}
         </p>
       )}
 
-      {result && !result.isComplete && <p className="text-slate-600">ยังทำแบบประเมินไม่เสร็จ</p>}
+      {result && !result.isComplete && <p className="text-stone-500">ยังทำแบบประเมินไม่เสร็จ</p>}
 
       {result?.results?.map((instrumentResult, index) => (
         <div
           key={`${instrumentResult.instrumentCode}-${index}`}
-          className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm"
+          className="rounded-2xl border border-pink-100 bg-white p-5 shadow-sm shadow-pink-900/5"
         >
-          <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
+          <p className="text-xs font-semibold uppercase tracking-wide text-pink-500">
             {instrumentResult.instrumentCode}
           </p>
-          <p className="mt-1 text-lg font-semibold text-slate-900">{instrumentResult.level}</p>
-          <p className="mt-2 text-sm text-slate-700">{instrumentResult.interpretation}</p>
-          <p className="mt-2 text-sm text-slate-600">{instrumentResult.advice}</p>
+          <p className="mt-1 text-lg font-semibold text-stone-900">{instrumentResult.level}</p>
+          <p className="mt-2 text-sm leading-relaxed text-stone-600">{instrumentResult.interpretation}</p>
+          <p className="mt-2 text-sm leading-relaxed text-stone-500">{instrumentResult.advice}</p>
         </div>
       ))}
 
       <button
         type="button"
         onClick={handleRestart}
-        className="min-h-11 rounded-md border border-slate-300 bg-white px-4 py-3 font-medium text-slate-800 hover:bg-slate-50"
+        className="min-h-11 rounded-full border border-stone-300 bg-white px-6 py-3 font-medium text-stone-700 transition-colors hover:border-pink-200 hover:bg-pink-50/50"
       >
         เริ่มทำแบบประเมินใหม่
       </button>
