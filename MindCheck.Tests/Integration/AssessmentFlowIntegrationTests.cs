@@ -32,7 +32,7 @@ public sealed class AssessmentFlowIntegrationTests : IClassFixture<MindCheckApiF
         var username = $"user-{Guid.NewGuid():N}";
         var response = await _client.PostAsJsonAsync(
             "/api/auth/register",
-            new { username, password = "correcthorsebattery" });
+            new { username, email = $"{username}@example.com", password = "correcthorsebattery" });
         response.EnsureSuccessStatusCode();
         var body = await response.Content.ReadFromJsonAsync<JsonElement>();
         var token = body.GetProperty("token").GetString()!;

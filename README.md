@@ -124,6 +124,7 @@ erDiagram
     USERS {
         uuid id PK
         string username
+        string email
         string password_hash
         string role
         datetime created_at

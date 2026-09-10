@@ -1,6 +1,7 @@
 using MindCheck.Application.Abstractions;
 using MindCheck.Application.Dtos.Admin;
 using MindCheck.Application.Exceptions;
+using MindCheck.Application.Validation;
 using MindCheck.Domain.Entities;
 using MindCheck.Domain.ValueObjects;
 
@@ -29,6 +30,12 @@ public sealed class CreateUserUseCase
             throw new InvalidAdminRequestException("Username must be at least 3 characters long.");
         }
 
+        var email = request.Email?.Trim() ?? string.Empty;
+        if (!EmailValidator.IsValid(email))
+        {
+            throw new InvalidAdminRequestException("A valid email address is required.");
+        }
+
         if (string.IsNullOrEmpty(request.Password) || request.Password.Length < 8)
         {
             throw new InvalidAdminRequestException("Password must be at least 8 characters long.");
@@ -39,21 +46,26 @@ public sealed class CreateUserUseCase
             throw new InvalidAdminRequestException($"Unknown role '{request.Role}'.");
         }
 
-        var existing = await _userRepository.GetByUsernameAsync(username, cancellationToken);
-        if (existing is not null)
+        if (await _userRepository.GetByUsernameAsync(username, cancellationToken) is not null)
         {
             throw new DuplicateUsernameException(username);
+        }
+
+        if (await _userRepository.GetByEmailAsync(email, cancellationToken) is not null)
+        {
+            throw new DuplicateEmailException(email);
         }
 
         var user = new User(
             new UserId(Guid.NewGuid()),
             username,
+            email,
             _passwordHasher.Hash(request.Password),
             role,
             _timeProvider.GetUtcNow());
 
         await _userRepository.AddAsync(user, cancellationToken);
 
-        return new UserDto(user.Id.Value, user.Username, user.Role.ToString(), user.CreatedAt);
+        return new UserDto(user.Id.Value, user.Username, user.Email, user.Role.ToString(), user.CreatedAt);
     }
 }

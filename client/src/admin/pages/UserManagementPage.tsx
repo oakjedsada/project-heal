@@ -16,6 +16,7 @@ export function UserManagementPage() {
   const [isLoading, setIsLoading] = useState(true)
 
   const [username, setUsername] = useState('')
+  const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [role, setRole] = useState('User')
   const [formError, setFormError] = useState<string | null>(null)
@@ -44,7 +45,7 @@ export function UserManagementPage() {
 
     const { error: apiError, response } = await apiClient.POST('/api/admin/users', {
       headers: authHeader,
-      body: { username, password, role },
+      body: { username, email, password, role },
     })
 
     setIsSubmitting(false)
@@ -56,6 +57,7 @@ export function UserManagementPage() {
     }
 
     setUsername('')
+    setEmail('')
     setPassword('')
     setRole('User')
     await loadUsers()
@@ -109,6 +111,16 @@ export function UserManagementPage() {
             />
           </label>
           <label className="flex flex-col gap-1 text-sm text-stone-700">
+            อีเมล
+            <input
+              required
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className={inputClass}
+            />
+          </label>
+          <label className="flex flex-col gap-1 text-sm text-stone-700">
             รหัสผ่าน
             <input
               required
@@ -154,6 +166,7 @@ export function UserManagementPage() {
               >
                 <div className="flex flex-col">
                   <span className="font-medium text-stone-900">{u.username}</span>
+                  <span className="text-xs text-stone-500">{u.email}</span>
                   <span className="text-xs text-stone-400">
                     สร้างเมื่อ {u.createdAt ? new Date(u.createdAt).toLocaleString('th-TH') : '-'}
                   </span>

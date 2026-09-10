@@ -1,6 +1,7 @@
 using MindCheck.Application.Abstractions;
 using MindCheck.Application.Dtos;
 using MindCheck.Application.Exceptions;
+using MindCheck.Application.Validation;
 using MindCheck.Domain.Entities;
 using MindCheck.Domain.ValueObjects;
 
@@ -33,15 +34,25 @@ public sealed class RegisterUserUseCase
             throw new InvalidAuthRequestException("Username must be at least 3 characters long.");
         }
 
+        var email = request.Email?.Trim() ?? string.Empty;
+        if (!EmailValidator.IsValid(email))
+        {
+            throw new InvalidAuthRequestException("A valid email address is required.");
+        }
+
         if (string.IsNullOrEmpty(request.Password) || request.Password.Length < 8)
         {
             throw new InvalidAuthRequestException("Password must be at least 8 characters long.");
         }
 
-        var existing = await _userRepository.GetByUsernameAsync(username, cancellationToken);
-        if (existing is not null)
+        if (await _userRepository.GetByUsernameAsync(username, cancellationToken) is not null)
         {
             throw new DuplicateUsernameException(username);
+        }
+
+        if (await _userRepository.GetByEmailAsync(email, cancellationToken) is not null)
+        {
+            throw new DuplicateEmailException(email);
         }
 
         // Self-registration can only ever create a User account — minting an
@@ -49,6 +60,7 @@ public sealed class RegisterUserUseCase
         var user = new User(
             new UserId(Guid.NewGuid()),
             username,
+            email,
             _passwordHasher.Hash(request.Password),
             UserRole.User,
             _timeProvider.GetUtcNow());

@@ -146,16 +146,26 @@ public sealed class ConfigDrivenInstrumentTests : IClassFixture<MindCheckApiFact
     {
         var response = await _client.PostAsJsonAsync(
             "/api/auth/login",
-            new { username = MindCheckApiFactory.TestAdminUsername, password = "definitely-wrong" });
+            new { usernameOrEmail = MindCheckApiFactory.TestAdminUsername, password = "definitely-wrong" });
 
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+    }
+
+    [Fact]
+    public async Task Login_WithEmailInsteadOfUsername_Succeeds()
+    {
+        var response = await _client.PostAsJsonAsync(
+            "/api/auth/login",
+            new { usernameOrEmail = MindCheckApiFactory.TestAdminEmail, password = MindCheckApiFactory.TestAdminPassword });
+
+        response.EnsureSuccessStatusCode();
     }
 
     private async Task<string> LoginAsAdminAsync()
     {
         var response = await _client.PostAsJsonAsync(
             "/api/auth/login",
-            new { username = MindCheckApiFactory.TestAdminUsername, password = MindCheckApiFactory.TestAdminPassword });
+            new { usernameOrEmail = MindCheckApiFactory.TestAdminUsername, password = MindCheckApiFactory.TestAdminPassword });
         response.EnsureSuccessStatusCode();
         var body = await response.Content.ReadFromJsonAsync<JsonElement>();
         return body.GetProperty("token").GetString()!;
@@ -166,7 +176,7 @@ public sealed class ConfigDrivenInstrumentTests : IClassFixture<MindCheckApiFact
         var username = $"user-{Guid.NewGuid():N}";
         var response = await _client.PostAsJsonAsync(
             "/api/auth/register",
-            new { username, password = "correcthorsebattery" });
+            new { username, email = $"{username}@example.com", password = "correcthorsebattery" });
         response.EnsureSuccessStatusCode();
         var body = await response.Content.ReadFromJsonAsync<JsonElement>();
         return body.GetProperty("token").GetString()!;

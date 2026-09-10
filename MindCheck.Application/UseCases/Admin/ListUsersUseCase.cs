@@ -17,7 +17,7 @@ public sealed class ListUsersUseCase
         var users = await _userRepository.GetAllAsync(cancellationToken);
 
         return users
-            .Select(u => new UserDto(u.Id.Value, u.Username, u.Role.ToString(), u.CreatedAt))
+            .Select(u => new UserDto(u.Id.Value, u.Username, u.Email, u.Role.ToString(), u.CreatedAt))
             .ToList();
     }
 }

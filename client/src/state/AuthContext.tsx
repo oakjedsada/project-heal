@@ -61,8 +61,8 @@ interface AuthContextValue {
   token: string | null
   user: AuthUser | null
   authHeader: Record<string, string>
-  register: (username: string, password: string) => Promise<AuthUser | null>
-  login: (username: string, password: string) => Promise<AuthUser | null>
+  register: (username: string, email: string, password: string) => Promise<AuthUser | null>
+  login: (usernameOrEmail: string, password: string) => Promise<AuthUser | null>
   logout: () => void
 }
 
@@ -85,16 +85,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return user
   }
 
-  const register = async (username: string, password: string): Promise<AuthUser | null> => {
-    const { data, error } = await apiClient.POST('/api/auth/register', { body: { username, password } })
+  const register = async (username: string, email: string, password: string): Promise<AuthUser | null> => {
+    const { data, error } = await apiClient.POST('/api/auth/register', { body: { username, email, password } })
     if (error || !data) {
       return null
     }
     return applyResponse(data)
   }
 
-  const login = async (username: string, password: string): Promise<AuthUser | null> => {
-    const { data, error } = await apiClient.POST('/api/auth/login', { body: { username, password } })
+  const login = async (usernameOrEmail: string, password: string): Promise<AuthUser | null> => {
+    const { data, error } = await apiClient.POST('/api/auth/login', { body: { usernameOrEmail, password } })
     if (error || !data) {
       return null
     }

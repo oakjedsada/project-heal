@@ -7,6 +7,7 @@ export function RegisterPage() {
   const navigate = useNavigate()
   const { register } = useAuth()
   const [username, setUsername] = useState('')
+  const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
@@ -22,12 +23,12 @@ export function RegisterPage() {
     }
 
     setIsLoading(true)
-    const user = await register(username, password)
+    const user = await register(username, email, password)
     setIsLoading(false)
     if (user) {
       navigate('/')
     } else {
-      setError('สมัครสมาชิกไม่สำเร็จ ชื่อผู้ใช้อาจถูกใช้แล้ว หรือรหัสผ่านสั้นเกินไป (อย่างน้อย 8 ตัวอักษร)')
+      setError('สมัครสมาชิกไม่สำเร็จ ชื่อผู้ใช้/อีเมลอาจถูกใช้แล้ว อีเมลไม่ถูกต้อง หรือรหัสผ่านสั้นเกินไป (อย่างน้อย 8 ตัวอักษร)')
     }
   }
 
@@ -52,6 +53,17 @@ export function RegisterPage() {
           onChange={(e) => setUsername(e.target.value)}
           className="min-h-11 rounded-xl border border-stone-300 px-3 py-2 focus:border-pink-400"
           autoFocus
+        />
+
+        <label htmlFor="register-email" className="text-sm font-medium text-stone-700">
+          อีเมล
+        </label>
+        <input
+          id="register-email"
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="min-h-11 rounded-xl border border-stone-300 px-3 py-2 focus:border-pink-400"
         />
 
         <label htmlFor="register-password" className="text-sm font-medium text-stone-700">

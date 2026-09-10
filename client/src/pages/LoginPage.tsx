@@ -6,7 +6,7 @@ import { useAuth } from '../state/AuthContext'
 export function LoginPage() {
   const navigate = useNavigate()
   const { login } = useAuth()
-  const [username, setUsername] = useState('')
+  const [usernameOrEmail, setUsernameOrEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
@@ -15,7 +15,7 @@ export function LoginPage() {
     e.preventDefault()
     setError(null)
     setIsLoading(true)
-    const user = await login(username, password)
+    const user = await login(usernameOrEmail, password)
     setIsLoading(false)
     if (user) {
       navigate(user.role === 'Admin' ? '/admin/dashboard' : '/')
@@ -36,13 +36,13 @@ export function LoginPage() {
         className="flex flex-col gap-3 rounded-2xl border border-pink-100 bg-white p-5 shadow-sm shadow-pink-900/5"
       >
         <label htmlFor="login-username" className="text-sm font-medium text-stone-700">
-          ชื่อผู้ใช้
+          ชื่อผู้ใช้หรืออีเมล
         </label>
         <input
           id="login-username"
           type="text"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
+          value={usernameOrEmail}
+          onChange={(e) => setUsernameOrEmail(e.target.value)}
           className="min-h-11 rounded-xl border border-stone-300 px-3 py-2 focus:border-pink-400"
           autoFocus
         />

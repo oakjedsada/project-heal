@@ -22,7 +22,7 @@ public sealed class LoginUseCase
 
     public async Task<AuthTokenResponse> ExecuteAsync(LoginRequest request, CancellationToken cancellationToken)
     {
-        var user = await _userRepository.GetByUsernameAsync(request.Username ?? string.Empty, cancellationToken)
+        var user = await _userRepository.GetByUsernameOrEmailAsync(request.UsernameOrEmail ?? string.Empty, cancellationToken)
             ?? throw new InvalidCredentialsException();
 
         if (!_passwordHasher.Verify(request.Password ?? string.Empty, user.PasswordHash))

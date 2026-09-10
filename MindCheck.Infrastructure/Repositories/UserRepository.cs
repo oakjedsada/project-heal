@@ -20,6 +20,12 @@ public sealed class UserRepository : IUserRepository
     public Task<User?> GetByUsernameAsync(string username, CancellationToken cancellationToken) =>
         _db.Users.FirstOrDefaultAsync(u => u.Username == username, cancellationToken);
 
+    public Task<User?> GetByEmailAsync(string email, CancellationToken cancellationToken) =>
+        _db.Users.FirstOrDefaultAsync(u => u.Email == email, cancellationToken);
+
+    public Task<User?> GetByUsernameOrEmailAsync(string usernameOrEmail, CancellationToken cancellationToken) =>
+        _db.Users.FirstOrDefaultAsync(u => u.Username == usernameOrEmail || u.Email == usernameOrEmail, cancellationToken);
+
     public Task<bool> AnyAsync(CancellationToken cancellationToken) =>
         _db.Users.AnyAsync(cancellationToken);
 

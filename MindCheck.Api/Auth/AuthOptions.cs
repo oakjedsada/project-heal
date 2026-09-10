@@ -15,5 +15,6 @@ public sealed class AuthOptions
     // Users table is empty. After that, admins are managed entirely through
     // AdminUsersController — these values are never consulted again.
     public string BootstrapAdminUsername { get; set; } = string.Empty;
+    public string BootstrapAdminEmail { get; set; } = string.Empty;
     public string BootstrapAdminPassword { get; set; } = string.Empty;
 }

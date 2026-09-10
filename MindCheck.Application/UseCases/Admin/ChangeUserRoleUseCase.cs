@@ -33,6 +33,6 @@ public sealed class ChangeUserRoleUseCase
         user.ChangeRole(newRole);
         await _userRepository.UpdateAsync(user, cancellationToken);
 
-        return new UserDto(user.Id.Value, user.Username, user.Role.ToString(), user.CreatedAt);
+        return new UserDto(user.Id.Value, user.Username, user.Email, user.Role.ToString(), user.CreatedAt);
     }
 }

@@ -26,6 +26,7 @@ public sealed class DomainExceptionHandler : IExceptionHandler
             FlowTransitionNotFoundException => StatusCodes.Status404NotFound,
             InvalidCredentialsException => StatusCodes.Status401Unauthorized,
             DuplicateUsernameException => StatusCodes.Status409Conflict,
+            DuplicateEmailException => StatusCodes.Status409Conflict,
             UserNotFoundException => StatusCodes.Status404NotFound,
             SessionAccessDeniedException => StatusCodes.Status403Forbidden,
             InvalidAuthRequestException => StatusCodes.Status400BadRequest,

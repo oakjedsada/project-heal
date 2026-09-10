@@ -1,3 +1,5 @@
 namespace MindCheck.Application.Dtos;
 
-public sealed record LoginRequest(string Username, string Password);
+/// <summary>UsernameOrEmail: the login field accepts either, so the caller isn't
+/// forced to remember which one they registered with.</summary>
+public sealed record LoginRequest(string UsernameOrEmail, string Password);

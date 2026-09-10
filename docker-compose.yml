@@ -23,6 +23,7 @@ services:
       ConnectionStrings__MindCheck: "Host=db;Port=5432;Database=mindcheck;Username=postgres;Password=postgres"
       Auth__JwtSigningKey: "local-docker-jwt-signing-key-at-least-32-bytes-long"
       Auth__BootstrapAdminUsername: "admin"
+      Auth__BootstrapAdminEmail: "admin@example.com"
       Auth__BootstrapAdminPassword: "local-docker-admin-password"
       Cors__AllowedOrigins__0: "http://localhost:18081"
     ports:

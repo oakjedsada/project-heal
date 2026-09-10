@@ -719,6 +719,7 @@ export interface components {
         };
         CreateUserRequest: {
             username?: string | null;
+            email?: string | null;
             password?: string | null;
             role?: string | null;
         };
@@ -796,7 +797,7 @@ export interface components {
             count?: number;
         };
         LoginRequest: {
-            username?: string | null;
+            usernameOrEmail?: string | null;
             password?: string | null;
         };
         NextStepResponse: {
@@ -821,6 +822,7 @@ export interface components {
         };
         RegisterRequest: {
             username?: string | null;
+            email?: string | null;
             password?: string | null;
         };
         ResultResponse: {
@@ -843,6 +845,7 @@ export interface components {
             /** Format: uuid */
             userId?: string;
             username?: string | null;
+            email?: string | null;
             role?: string | null;
             /** Format: date-time */
             createdAt?: string;

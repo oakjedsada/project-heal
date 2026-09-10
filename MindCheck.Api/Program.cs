@@ -132,12 +132,14 @@ using (var scope = app.Services.CreateScope())
     {
         var authOptions = scope.ServiceProvider.GetRequiredService<IOptions<AuthOptions>>().Value;
         if (!string.IsNullOrWhiteSpace(authOptions.BootstrapAdminUsername) &&
+            !string.IsNullOrWhiteSpace(authOptions.BootstrapAdminEmail) &&
             !string.IsNullOrWhiteSpace(authOptions.BootstrapAdminPassword))
         {
             var passwordHasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher>();
             var admin = new User(
                 new UserId(Guid.NewGuid()),
                 authOptions.BootstrapAdminUsername,
+                authOptions.BootstrapAdminEmail,
                 passwordHasher.Hash(authOptions.BootstrapAdminPassword),
                 UserRole.Admin,
                 DateTimeOffset.UtcNow);
