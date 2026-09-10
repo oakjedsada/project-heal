@@ -15,9 +15,15 @@ public sealed class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(u => u.Email).IsRequired().HasMaxLength(254);
         builder.Property(u => u.PasswordHash).IsRequired();
         builder.Property(u => u.Role).HasConversion<string>().HasMaxLength(20).IsRequired();
+        builder.Property(u => u.PasswordResetToken).HasMaxLength(128);
+        builder.Property(u => u.PasswordResetTokenExpiresAt);
         builder.Property(u => u.CreatedAt).IsRequired();
 
         builder.HasIndex(u => u.Username).IsUnique();
         builder.HasIndex(u => u.Email).IsUnique();
+        // Not unique: every signed-out user starts with a null token, and
+        // Postgres treats each NULL as distinct for a unique index anyway —
+        // this index exists purely to make the reset-password lookup fast.
+        builder.HasIndex(u => u.PasswordResetToken);
     }
 }

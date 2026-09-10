@@ -26,6 +26,9 @@ public sealed class UserRepository : IUserRepository
     public Task<User?> GetByUsernameOrEmailAsync(string usernameOrEmail, CancellationToken cancellationToken) =>
         _db.Users.FirstOrDefaultAsync(u => u.Username == usernameOrEmail || u.Email == usernameOrEmail, cancellationToken);
 
+    public Task<User?> GetByPasswordResetTokenAsync(string token, CancellationToken cancellationToken) =>
+        _db.Users.FirstOrDefaultAsync(u => u.PasswordResetToken == token, cancellationToken);
+
     public Task<bool> AnyAsync(CancellationToken cancellationToken) =>
         _db.Users.AnyAsync(cancellationToken);
 

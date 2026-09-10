@@ -48,9 +48,14 @@ export function LoginPage() {
           autoFocus
         />
 
-        <label htmlFor="login-password" className="text-sm font-medium text-stone-700">
-          รหัสผ่าน
-        </label>
+        <div className="flex items-center justify-between">
+          <label htmlFor="login-password" className="text-sm font-medium text-stone-700">
+            รหัสผ่าน
+          </label>
+          <Link to="/forgot-password" className="text-xs font-medium text-pink-600 underline decoration-pink-300 underline-offset-2">
+            ลืมรหัสผ่าน?
+          </Link>
+        </div>
         <input
           id="login-password"
           type="password"

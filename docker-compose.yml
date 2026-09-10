@@ -25,6 +25,16 @@ services:
       Auth__BootstrapAdminUsername: "admin"
       Auth__BootstrapAdminEmail: "admin@example.com"
       Auth__BootstrapAdminPassword: "local-docker-admin-password"
+      Auth__FrontendBaseUrl: "http://localhost:18081"
+      # Real SMTP credentials come from a local, gitignored .env file (see
+      # .env.example) — left blank here on purpose so this file stays safe to
+      # commit. Password reset falls back to showing the link in-app when unset.
+      Smtp__Host: "${SMTP_HOST:-}"
+      Smtp__Port: "${SMTP_PORT:-587}"
+      Smtp__Username: "${SMTP_USERNAME:-}"
+      Smtp__Password: "${SMTP_PASSWORD:-}"
+      Smtp__FromAddress: "${SMTP_FROM_ADDRESS:-}"
+      Smtp__FromName: "${SMTP_FROM_NAME:-MindCheck}"
       Cors__AllowedOrigins__0: "http://localhost:18081"
     ports:
       - "18080:8080"

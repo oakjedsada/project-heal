@@ -11,6 +11,12 @@ public sealed class AuthOptions
     public string Audience { get; set; } = "MindCheck.Client";
     public int TokenLifetimeMinutes { get; set; } = 480;
 
+    // The client's own origin, used only to build the link inside a
+    // password-reset email/response — the API has no other reason to know
+    // where the frontend lives.
+    public string FrontendBaseUrl { get; set; } = "http://localhost:5173";
+    public int PasswordResetTokenLifetimeMinutes { get; set; } = 60;
+
     // Used once, at startup, to create the very first Admin account when the
     // Users table is empty. After that, admins are managed entirely through
     // AdminUsersController — these values are never consulted again.

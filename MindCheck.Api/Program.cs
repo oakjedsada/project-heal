@@ -5,6 +5,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using MindCheck.Api.Auth;
+using MindCheck.Api.Email;
 using MindCheck.Api.ErrorHandling;
 using MindCheck.Api.HelpResources;
 using MindCheck.Application.Abstractions;
@@ -66,6 +67,8 @@ builder.Services.AddScoped<IHelpResourceProvider, ConfigurationHelpResourceProvi
 
 builder.Services.AddSingleton<IPasswordHasher, PasswordHasherAdapter>();
 builder.Services.AddScoped<IAuthTokenGenerator, JwtAuthTokenGenerator>();
+builder.Services.AddScoped<IPasswordResetLinkBuilder, PasswordResetLinkBuilder>();
+builder.Services.AddScoped<IEmailSender, SmtpEmailSender>();
 
 builder.Services.AddScoped<StartSessionUseCase>();
 builder.Services.AddScoped<GetNextQuestionUseCase>();
@@ -73,6 +76,8 @@ builder.Services.AddScoped<SubmitAnswerUseCase>();
 builder.Services.AddScoped<GetResultUseCase>();
 builder.Services.AddScoped<RegisterUserUseCase>();
 builder.Services.AddScoped<LoginUseCase>();
+builder.Services.AddScoped<ForgotPasswordUseCase>();
+builder.Services.AddScoped<ResetPasswordUseCase>();
 
 builder.Services.AddScoped<CreateInstrumentUseCase>();
 builder.Services.AddScoped<ListInstrumentsUseCase>();
@@ -88,6 +93,7 @@ builder.Services.AddScoped<UpdateUserUseCase>();
 builder.Services.AddScoped<DeleteUserUseCase>();
 
 builder.Services.Configure<AuthOptions>(builder.Configuration.GetSection(AuthOptions.SectionName));
+builder.Services.Configure<SmtpOptions>(builder.Configuration.GetSection(SmtpOptions.SectionName));
 
 // Bound lazily via IOptions (resolved the first time the JWT handler actually
 // needs it, i.e. per-request, after the host — and any test config overrides

@@ -14,6 +14,8 @@ public interface IUserRepository
     /// <summary>Login lookup: matches by username OR email, whichever the caller typed.</summary>
     Task<User?> GetByUsernameOrEmailAsync(string usernameOrEmail, CancellationToken cancellationToken);
 
+    Task<User?> GetByPasswordResetTokenAsync(string token, CancellationToken cancellationToken);
+
     Task<bool> AnyAsync(CancellationToken cancellationToken);
 
     Task<int> CountByRoleAsync(UserRole role, CancellationToken cancellationToken);

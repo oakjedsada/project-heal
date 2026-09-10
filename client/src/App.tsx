@@ -9,8 +9,10 @@ import { Layout } from './components/Layout'
 import { AssessmentPage } from './pages/AssessmentPage'
 import { ConsentPage } from './pages/ConsentPage'
 import { EmergencyPage } from './pages/EmergencyPage'
+import { ForgotPasswordPage } from './pages/ForgotPasswordPage'
 import { LoginPage } from './pages/LoginPage'
 import { RegisterPage } from './pages/RegisterPage'
+import { ResetPasswordPage } from './pages/ResetPasswordPage'
 import { ResultPage } from './pages/ResultPage'
 import { AuthProvider } from './state/AuthContext'
 import { AuthRouteGuard } from './state/AuthRouteGuard'
@@ -113,6 +115,8 @@ export default function App() {
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
         <Route path="/admin/*" element={<AdminApp />} />
         <Route path="/*" element={<PublicApp />} />
       </Routes>

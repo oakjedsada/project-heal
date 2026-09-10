@@ -9,6 +9,8 @@ public sealed class User
     public string Email { get; private set; }
     public string PasswordHash { get; private set; }
     public UserRole Role { get; private set; }
+    public string? PasswordResetToken { get; private set; }
+    public DateTimeOffset? PasswordResetTokenExpiresAt { get; private set; }
     public DateTimeOffset CreatedAt { get; }
 
     public User(UserId id, string username, string email, string passwordHash, UserRole role, DateTimeOffset createdAt)
@@ -39,5 +41,17 @@ public sealed class User
     public void ChangeRole(UserRole newRole)
     {
         Role = newRole;
+    }
+
+    public void SetPasswordResetToken(string token, DateTimeOffset expiresAt)
+    {
+        PasswordResetToken = token;
+        PasswordResetTokenExpiresAt = expiresAt;
+    }
+
+    public void ClearPasswordResetToken()
+    {
+        PasswordResetToken = null;
+        PasswordResetTokenExpiresAt = null;
     }
 }

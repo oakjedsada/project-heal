@@ -30,6 +30,7 @@ public sealed class DomainExceptionHandler : IExceptionHandler
             UserNotFoundException => StatusCodes.Status404NotFound,
             SessionAccessDeniedException => StatusCodes.Status403Forbidden,
             InvalidAuthRequestException => StatusCodes.Status400BadRequest,
+            InvalidOrExpiredResetTokenException => StatusCodes.Status400BadRequest,
             _ => 0
         };
 
