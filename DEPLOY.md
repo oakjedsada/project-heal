@@ -33,8 +33,10 @@ these steps can't be done on your behalf without your login.
    projects). Set these variables:
    - `ConnectionStrings__MindCheck` = `Host=${{Postgres.PGHOST}};Port=${{Postgres.PGPORT}};Database=${{Postgres.PGDATABASE}};Username=${{Postgres.PGUSER}};Password=${{Postgres.PGPASSWORD}}`
    - `Auth__JwtSigningKey` = a random string, 32+ bytes
-   - `Auth__BootstrapAdminUsername` / `Auth__BootstrapAdminPassword` = a real username and password, not the dev placeholders — only used once, to seed the first admin account when the `users` table is empty
-   - `Cors__AllowedOrigins__0` = the client service's public URL (see step 4)
+   - `Auth__BootstrapAdminUsername` / `Auth__BootstrapAdminEmail` / `Auth__BootstrapAdminPassword` = a real username, email, and password, not the dev placeholders — only used once, to seed the first admin account when the `users` table is empty
+   - `Auth__FrontendBaseUrl` = the client service's public URL (see step 4) — used to build the link inside password-reset emails
+   - `Cors__AllowedOrigins__0` = the client service's public URL (same value as above)
+   - `Smtp__Host` / `Smtp__Port` / `Smtp__Username` / `Smtp__Password` / `Smtp__FromAddress` = real SMTP credentials (e.g. a Gmail address + App Password — see `.env.example`) so "ลืมรหัสผ่าน" emails real users instead of returning the reset link in the API response
    - `EmergencyHelpResources__0__Label` / `__Contact` = real crisis line info before this is shown to anyone for real
 
    Railway injects `PORT` automatically; the Dockerfile already listens on it.
