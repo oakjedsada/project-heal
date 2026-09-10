@@ -91,6 +91,7 @@ export function UserManagementPage() {
             ชื่อผู้ใช้
             <input
               required
+              autoComplete="off"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               className={inputClass}
@@ -101,6 +102,7 @@ export function UserManagementPage() {
             <input
               required
               type="email"
+              autoComplete="off"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className={inputClass}
@@ -111,6 +113,7 @@ export function UserManagementPage() {
             <input
               required
               type="password"
+              autoComplete="new-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className={inputClass}

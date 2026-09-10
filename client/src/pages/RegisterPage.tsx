@@ -49,6 +49,7 @@ export function RegisterPage() {
         <input
           id="register-username"
           type="text"
+          autoComplete="username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
           className="min-h-11 rounded-xl border border-stone-300 px-3 py-2 focus:border-pink-400"
@@ -61,6 +62,7 @@ export function RegisterPage() {
         <input
           id="register-email"
           type="email"
+          autoComplete="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           className="min-h-11 rounded-xl border border-stone-300 px-3 py-2 focus:border-pink-400"
@@ -72,6 +74,7 @@ export function RegisterPage() {
         <input
           id="register-password"
           type="password"
+          autoComplete="new-password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           className="min-h-11 rounded-xl border border-stone-300 px-3 py-2 focus:border-pink-400"
@@ -82,6 +85,7 @@ export function RegisterPage() {
         </label>
         <input
           id="register-confirm-password"
+          autoComplete="new-password"
           type="password"
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}

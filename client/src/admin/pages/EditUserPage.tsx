@@ -22,7 +22,6 @@ export function EditUserPage() {
   const [createdAt, setCreatedAt] = useState<string | null>(null)
 
   const [formError, setFormError] = useState<string | null>(null)
-  const [successMessage, setSuccessMessage] = useState<string | null>(null)
   const [isSaving, setIsSaving] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
 
@@ -53,7 +52,6 @@ export function EditUserPage() {
     e.preventDefault()
     if (!id) return
     setFormError(null)
-    setSuccessMessage(null)
     setIsSaving(true)
 
     const { error, response } = await apiClient.PATCH('/api/admin/users/{id}', {
@@ -70,8 +68,7 @@ export function EditUserPage() {
       return
     }
 
-    setPassword('')
-    setSuccessMessage('บันทึกข้อมูลผู้ใช้แล้ว')
+    navigate('/admin/users')
   }
 
   const handleDelete = async () => {
@@ -113,6 +110,7 @@ export function EditUserPage() {
               ชื่อผู้ใช้
               <input
                 required
+                autoComplete="off"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 className={inputClass}
@@ -124,6 +122,7 @@ export function EditUserPage() {
               <input
                 required
                 type="email"
+                autoComplete="off"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className={inputClass}
@@ -145,6 +144,7 @@ export function EditUserPage() {
               ตั้งรหัสผ่านใหม่ (เว้นว่างไว้ถ้าไม่ต้องการเปลี่ยน)
               <input
                 type="password"
+                autoComplete="new-password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className={inputClass}
@@ -157,7 +157,6 @@ export function EditUserPage() {
             )}
 
             {formError && <p className="text-sm text-red-700">{formError}</p>}
-            {successMessage && <p className="text-sm text-pink-700">{successMessage}</p>}
 
             <div className="mt-2 flex gap-3">
               <button
