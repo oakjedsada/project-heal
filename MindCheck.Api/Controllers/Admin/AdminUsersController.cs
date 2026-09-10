@@ -12,19 +12,22 @@ namespace MindCheck.Api.Controllers.Admin;
 public sealed class AdminUsersController : ControllerBase
 {
     private readonly ListUsersUseCase _listUsersUseCase;
+    private readonly GetUserUseCase _getUserUseCase;
     private readonly CreateUserUseCase _createUserUseCase;
-    private readonly ChangeUserRoleUseCase _changeUserRoleUseCase;
+    private readonly UpdateUserUseCase _updateUserUseCase;
     private readonly DeleteUserUseCase _deleteUserUseCase;
 
     public AdminUsersController(
         ListUsersUseCase listUsersUseCase,
+        GetUserUseCase getUserUseCase,
         CreateUserUseCase createUserUseCase,
-        ChangeUserRoleUseCase changeUserRoleUseCase,
+        UpdateUserUseCase updateUserUseCase,
         DeleteUserUseCase deleteUserUseCase)
     {
         _listUsersUseCase = listUsersUseCase;
+        _getUserUseCase = getUserUseCase;
         _createUserUseCase = createUserUseCase;
-        _changeUserRoleUseCase = changeUserRoleUseCase;
+        _updateUserUseCase = updateUserUseCase;
         _deleteUserUseCase = deleteUserUseCase;
     }
 
@@ -34,16 +37,22 @@ public sealed class AdminUsersController : ControllerBase
         return Ok(await _listUsersUseCase.ExecuteAsync(cancellationToken));
     }
 
+    [HttpGet("{id:guid}")]
+    public async Task<ActionResult<UserDto>> Get(Guid id, CancellationToken cancellationToken)
+    {
+        return Ok(await _getUserUseCase.ExecuteAsync(new UserId(id), cancellationToken));
+    }
+
     [HttpPost]
     public async Task<ActionResult<UserDto>> Create([FromBody] CreateUserRequest request, CancellationToken cancellationToken)
     {
         return Ok(await _createUserUseCase.ExecuteAsync(request, cancellationToken));
     }
 
-    [HttpPatch("{id:guid}/role")]
-    public async Task<ActionResult<UserDto>> ChangeRole(Guid id, [FromBody] ChangeUserRoleRequest request, CancellationToken cancellationToken)
+    [HttpPatch("{id:guid}")]
+    public async Task<ActionResult<UserDto>> Update(Guid id, [FromBody] UpdateUserRequest request, CancellationToken cancellationToken)
     {
-        return Ok(await _changeUserRoleUseCase.ExecuteAsync(new UserId(id), request, cancellationToken));
+        return Ok(await _updateUserUseCase.ExecuteAsync(new UserId(id), request, cancellationToken));
     }
 
     [HttpDelete("{id:guid}")]

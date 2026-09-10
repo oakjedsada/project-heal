@@ -307,20 +307,14 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/admin/users/{id}/role": {
+    "/api/admin/users/{id}": {
         parameters: {
             query?: never;
             header?: never;
             path?: never;
             cookie?: never;
         };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch: {
+        get: {
             parameters: {
                 query?: never;
                 header?: never;
@@ -329,13 +323,7 @@ export interface paths {
                 };
                 cookie?: never;
             };
-            requestBody?: {
-                content: {
-                    "application/json": components["schemas"]["ChangeUserRoleRequest"];
-                    "text/json": components["schemas"]["ChangeUserRoleRequest"];
-                    "application/*+json": components["schemas"]["ChangeUserRoleRequest"];
-                };
-            };
+            requestBody?: never;
             responses: {
                 /** @description OK */
                 200: {
@@ -350,16 +338,6 @@ export interface paths {
                 };
             };
         };
-        trace?: never;
-    };
-    "/api/admin/users/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
         put?: never;
         post?: never;
         delete: {
@@ -384,7 +362,36 @@ export interface paths {
         };
         options?: never;
         head?: never;
-        patch?: never;
+        patch: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": components["schemas"]["UpdateUserRequest"];
+                    "text/json": components["schemas"]["UpdateUserRequest"];
+                    "application/*+json": components["schemas"]["UpdateUserRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["UserDto"];
+                        "application/json": components["schemas"]["UserDto"];
+                        "text/json": components["schemas"]["UserDto"];
+                    };
+                };
+            };
+        };
         trace?: never;
     };
     "/api/auth/register": {
@@ -651,9 +658,6 @@ export interface components {
             username?: string | null;
             role?: string | null;
         };
-        ChangeUserRoleRequest: {
-            role?: string | null;
-        };
         ChoiceDto: {
             /** Format: int32 */
             choiceId?: number;
@@ -840,6 +844,12 @@ export interface components {
             questionId?: number;
             /** Format: int32 */
             choiceId?: number;
+        };
+        UpdateUserRequest: {
+            username?: string | null;
+            email?: string | null;
+            role?: string | null;
+            password?: string | null;
         };
         UserDto: {
             /** Format: uuid */

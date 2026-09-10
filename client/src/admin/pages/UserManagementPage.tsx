@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { apiClient } from '../../api/client'
 import type { components } from '../../api/schema'
 import { useAuth } from '../../state/AuthContext'
@@ -60,21 +61,6 @@ export function UserManagementPage() {
     setEmail('')
     setPassword('')
     setRole('User')
-    await loadUsers()
-  }
-
-  const handleChangeRole = async (userId: string, newRole: string) => {
-    setError(null)
-    const { error: apiError, response } = await apiClient.PATCH('/api/admin/users/{id}/role', {
-      params: { path: { id: userId } },
-      headers: authHeader,
-      body: { role: newRole },
-    })
-    if (apiError || !response.ok) {
-      const detail = (apiError as { detail?: string } | undefined)?.detail
-      setError(detail ?? `เปลี่ยน role ไม่สำเร็จ (${response.status})`)
-      return
-    }
     await loadUsers()
   }
 
@@ -172,17 +158,15 @@ export function UserManagementPage() {
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <select
-                    value={u.role}
-                    onChange={(e) => handleChangeRole(u.userId!, e.target.value)}
-                    className="min-h-9 rounded-lg border border-stone-300 px-2 py-1 text-sm focus:border-pink-400"
+                  <span className="rounded-full bg-pink-50 px-2.5 py-1 text-xs font-medium text-pink-700">
+                    {u.role}
+                  </span>
+                  <Link
+                    to={`/admin/users/${u.userId}`}
+                    className="rounded-lg border border-pink-300 px-2 py-1 text-xs text-pink-700 hover:bg-pink-50"
                   >
-                    {ROLES.map((r) => (
-                      <option key={r} value={r}>
-                        {r}
-                      </option>
-                    ))}
-                  </select>
+                    แก้ไข
+                  </Link>
                   <button
                     type="button"
                     onClick={() => handleDelete(u.userId!)}

@@ -2,6 +2,7 @@ import { Navigate, Route, Routes } from 'react-router-dom'
 import { AdminRouteGuard } from './admin/AdminRouteGuard'
 import { CreateInstrumentPage } from './admin/pages/CreateInstrumentPage'
 import { DashboardPage } from './admin/pages/DashboardPage'
+import { EditUserPage } from './admin/pages/EditUserPage'
 import { FlowTransitionsPage } from './admin/pages/FlowTransitionsPage'
 import { UserManagementPage } from './admin/pages/UserManagementPage'
 import { Layout } from './components/Layout'
@@ -90,6 +91,14 @@ function AdminApp() {
         element={
           <AdminRouteGuard>
             <UserManagementPage />
+          </AdminRouteGuard>
+        }
+      />
+      <Route
+        path="users/:id"
+        element={
+          <AdminRouteGuard>
+            <EditUserPage />
           </AdminRouteGuard>
         }
       />

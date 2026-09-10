@@ -82,8 +82,9 @@ builder.Services.AddScoped<ListFlowTransitionsUseCase>();
 builder.Services.AddScoped<DeleteFlowTransitionUseCase>();
 builder.Services.AddScoped<GetDashboardStatsUseCase>();
 builder.Services.AddScoped<ListUsersUseCase>();
+builder.Services.AddScoped<GetUserUseCase>();
 builder.Services.AddScoped<CreateUserUseCase>();
-builder.Services.AddScoped<ChangeUserRoleUseCase>();
+builder.Services.AddScoped<UpdateUserUseCase>();
 builder.Services.AddScoped<DeleteUserUseCase>();
 
 builder.Services.Configure<AuthOptions>(builder.Configuration.GetSection(AuthOptions.SectionName));
