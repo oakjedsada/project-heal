@@ -18,10 +18,17 @@ export function LoginPage() {
     e.preventDefault()
     setError(null)
     setIsLoading(true)
-    const user = await login(usernameOrEmail, password)
+    const result = await login(usernameOrEmail, password)
     setIsLoading(false)
-    if (user) {
-      navigate(user.role === 'Admin' ? '/admin/dashboard' : '/')
+    if (result.ok === true) {
+      navigate(result.user.role === 'Admin' ? '/admin/dashboard' : '/')
+      return
+    }
+
+    if (result.status === 423) {
+      setError(t('login.lockedOut'))
+    } else if (result.status === 429) {
+      setError(t('login.rateLimited'))
     } else {
       setError(t('login.invalidCredentials'))
     }

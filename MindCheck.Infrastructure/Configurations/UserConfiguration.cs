@@ -18,6 +18,9 @@ public sealed class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(u => u.PasswordResetToken).HasMaxLength(128);
         builder.Property(u => u.PasswordResetTokenExpiresAt);
         builder.Property(u => u.CreatedAt).IsRequired();
+        builder.Property(u => u.TokenVersion).IsRequired().HasDefaultValue(0);
+        builder.Property(u => u.FailedLoginAttempts).IsRequired().HasDefaultValue(0);
+        builder.Property(u => u.LockedOutUntil);
 
         builder.HasIndex(u => u.Username).IsUnique();
         builder.HasIndex(u => u.Email).IsUnique();

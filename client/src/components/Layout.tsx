@@ -7,11 +7,16 @@ import { LanguageToggle } from './LanguageToggle'
 
 export function Layout({ children }: { children: ReactNode }) {
   const navigate = useNavigate()
-  const { user, logout } = useAuth()
+  const { user, logout, logoutAllDevices } = useAuth()
   const { t } = useLanguage()
 
   const handleLogout = () => {
     logout()
+    navigate('/login')
+  }
+
+  const handleLogoutAll = async () => {
+    await logoutAllDevices()
     navigate('/login')
   }
 
@@ -33,6 +38,10 @@ export function Layout({ children }: { children: ReactNode }) {
               {t('common.loggedInAs', { username: user.username })} ·{' '}
               <button type="button" onClick={handleLogout} className="underline decoration-stone-300 underline-offset-2 hover:text-stone-700">
                 {t('common.logout')}
+              </button>{' '}
+              ·{' '}
+              <button type="button" onClick={handleLogoutAll} className="underline decoration-stone-300 underline-offset-2 hover:text-stone-700">
+                {t('common.logoutAll')}
               </button>
             </span>
           )}

@@ -4,5 +4,5 @@ namespace MindCheck.Application.Abstractions;
 
 public interface IAuthTokenGenerator
 {
-    string GenerateToken(UserId userId, string username, UserRole role);
+    string GenerateToken(UserId userId, string username, UserRole role, int tokenVersion);
 }

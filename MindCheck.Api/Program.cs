@@ -1,5 +1,8 @@
+using System.Security.Claims;
 using System.Text;
+using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -69,6 +72,7 @@ builder.Services.AddSingleton<IPasswordHasher, PasswordHasherAdapter>();
 builder.Services.AddScoped<IAuthTokenGenerator, JwtAuthTokenGenerator>();
 builder.Services.AddScoped<IPasswordResetLinkBuilder, PasswordResetLinkBuilder>();
 builder.Services.AddScoped<IEmailSender, SmtpEmailSender>();
+builder.Services.AddScoped<IAccountLockoutPolicy, AccountLockoutPolicy>();
 
 builder.Services.AddScoped<StartSessionUseCase>();
 builder.Services.AddScoped<GetNextQuestionUseCase>();
@@ -78,6 +82,7 @@ builder.Services.AddScoped<RegisterUserUseCase>();
 builder.Services.AddScoped<LoginUseCase>();
 builder.Services.AddScoped<ForgotPasswordUseCase>();
 builder.Services.AddScoped<ResetPasswordUseCase>();
+builder.Services.AddScoped<LogoutAllSessionsUseCase>();
 
 builder.Services.AddScoped<CreateInstrumentUseCase>();
 builder.Services.AddScoped<ListInstrumentsUseCase>();
@@ -94,6 +99,29 @@ builder.Services.AddScoped<DeleteUserUseCase>();
 
 builder.Services.Configure<AuthOptions>(builder.Configuration.GetSection(AuthOptions.SectionName));
 builder.Services.Configure<SmtpOptions>(builder.Configuration.GetSection(SmtpOptions.SectionName));
+
+// Only guards the unauthenticated auth endpoints (register/login/forgot/reset
+// password) — the ones an attacker can hammer without a token. Partitioned
+// by caller IP so one abusive client can't exhaust another's quota; a
+// same-IP burst past the limit gets 429 immediately (no queueing).
+builder.Services.AddRateLimiter(options =>
+{
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+    options.AddPolicy(RateLimiterPolicies.Auth, httpContext =>
+    {
+        // Read per-request (not captured at startup) so it stays lazy, same
+        // reasoning as the JwtBearerOptions binding above (ADR 0006/0009).
+        var authOptions = httpContext.RequestServices.GetRequiredService<IOptions<AuthOptions>>().Value;
+        return RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+            factory: _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = authOptions.AuthRateLimitPermitLimit,
+                Window = TimeSpan.FromSeconds(authOptions.AuthRateLimitWindowSeconds),
+                QueueLimit = 0,
+            });
+    });
+});
 
 // Bound lazily via IOptions (resolved the first time the JWT handler actually
 // needs it, i.e. per-request, after the host — and any test config overrides
@@ -116,6 +144,33 @@ builder.Services.AddOptions<JwtBearerOptions>(JwtBearerDefaults.AuthenticationSc
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authOptions.JwtSigningKey)),
             ValidateLifetime = true,
+        };
+
+        // Makes an already-issued JWT revocable: a password change or
+        // "log out everywhere" bumps User.TokenVersion in the DB, and any
+        // token minted before that no longer matches — see ADR 0015.
+        jwtOptions.Events = new JwtBearerEvents
+        {
+            OnTokenValidated = async context =>
+            {
+                var userIdClaim = context.Principal?.FindFirstValue(ClaimTypes.NameIdentifier);
+                var tokenVersionClaim = context.Principal?.FindFirstValue(CustomClaimTypes.TokenVersion);
+                if (userIdClaim is null
+                    || tokenVersionClaim is null
+                    || !Guid.TryParse(userIdClaim, out var userIdValue)
+                    || !int.TryParse(tokenVersionClaim, out var tokenVersion))
+                {
+                    context.Fail("Invalid token.");
+                    return;
+                }
+
+                var userRepository = context.HttpContext.RequestServices.GetRequiredService<IUserRepository>();
+                var user = await userRepository.GetByIdAsync(new UserId(userIdValue), context.HttpContext.RequestAborted);
+                if (user is null || user.TokenVersion != tokenVersion)
+                {
+                    context.Fail("Token has been revoked.");
+                }
+            },
         };
     });
 builder.Services.AddAuthorization();
@@ -161,6 +216,8 @@ app.UseSwagger();
 app.UseSwaggerUI();
 
 app.UseCors("Default");
+
+app.UseRateLimiter();
 
 app.UseAuthentication();
 app.UseAuthorization();

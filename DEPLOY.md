@@ -56,5 +56,4 @@ these steps can't be done on your behalf without your login.
 - Every scoring cut-off and risk threshold in `MindCheck.Infrastructure/Seed/SeedData.cs`
   is dummy data (`PLACEHOLDER-DO-NOT-USE-CLINICALLY`) — replace via the admin
   UI or a new seed before this represents anything real.
-- Real per-user accounts with roles now exist (see [ADR 0014](docs/adr/0014-unified-user-accounts-with-roles.md), supersedes [ADR 0012](docs/adr/0012-admin-auth-single-password-jwt.md)), but there's still no login rate limiting, no lockout, and no revocable JWTs — fine for a portfolio demo, not for a real deployment with real user data.
-- `EmergencyHelpResources` in `appsettings.json` is placeholder hotline text.
+- Real per-user accounts with roles now exist (see [ADR 0014](docs/adr/0014-unified-user-accounts-with-roles.md), supersedes [ADR 0012](docs/adr/0012-admin-auth-single-password-jwt.md)); login lockout, auth rate limiting, and revocable JWTs were added on top (see [ADR 0015](docs/adr/0015-auth-hardening-lockout-rate-limit-revocable-jwt.md)). Still worth reviewing before a real deploy: the lockout/rate-limit counters are per-IP, so users behind the same NAT share one budget, and `Auth:MaxFailedLoginAttempts`/`Auth:AuthRateLimitPermitLimit` should be tuned for expected real traffic rather than left at the demo defaults.

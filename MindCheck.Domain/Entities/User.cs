@@ -13,6 +13,16 @@ public sealed class User
     public DateTimeOffset? PasswordResetTokenExpiresAt { get; private set; }
     public DateTimeOffset CreatedAt { get; }
 
+    // Bumped whenever a password changes (self-service reset or admin edit)
+    // or the user explicitly asks to sign out everywhere. Embedded as a JWT
+    // claim; a token whose value no longer matches the current one is
+    // rejected at validation time — the only way this codebase can revoke an
+    // already-issued token without a separate blacklist store.
+    public int TokenVersion { get; private set; }
+
+    public int FailedLoginAttempts { get; private set; }
+    public DateTimeOffset? LockedOutUntil { get; private set; }
+
     public User(UserId id, string username, string email, string passwordHash, UserRole role, DateTimeOffset createdAt)
     {
         Id = id;
@@ -21,6 +31,8 @@ public sealed class User
         PasswordHash = passwordHash;
         Role = role;
         CreatedAt = createdAt;
+        TokenVersion = 0;
+        FailedLoginAttempts = 0;
     }
 
     public void ChangeUsername(string newUsername)
@@ -36,6 +48,29 @@ public sealed class User
     public void ChangePassword(string newPasswordHash)
     {
         PasswordHash = newPasswordHash;
+        TokenVersion++;
+    }
+
+    public void IncrementTokenVersion()
+    {
+        TokenVersion++;
+    }
+
+    public bool IsLockedOut(DateTimeOffset now) => LockedOutUntil is { } until && until > now;
+
+    public void RegisterFailedLogin(DateTimeOffset now, int maxAttempts, TimeSpan lockoutDuration)
+    {
+        FailedLoginAttempts++;
+        if (FailedLoginAttempts >= maxAttempts)
+        {
+            LockedOutUntil = now.Add(lockoutDuration);
+        }
+    }
+
+    public void RegisterSuccessfulLogin()
+    {
+        FailedLoginAttempts = 0;
+        LockedOutUntil = null;
     }
 
     public void ChangeRole(UserRole newRole)

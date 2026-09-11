@@ -17,7 +17,7 @@ public sealed class JwtAuthTokenGenerator : IAuthTokenGenerator
         _options = options.Value;
     }
 
-    public string GenerateToken(UserId userId, string username, UserRole role)
+    public string GenerateToken(UserId userId, string username, UserRole role, int tokenVersion)
     {
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.JwtSigningKey));
         var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -26,6 +26,7 @@ public sealed class JwtAuthTokenGenerator : IAuthTokenGenerator
             new Claim(ClaimTypes.NameIdentifier, userId.Value.ToString()),
             new Claim(ClaimTypes.Name, username),
             new Claim(ClaimTypes.Role, role.ToString()),
+            new Claim(CustomClaimTypes.TokenVersion, tokenVersion.ToString()),
         };
 
         var token = new JwtSecurityToken(

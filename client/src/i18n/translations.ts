@@ -6,6 +6,7 @@ export type Language = 'th' | 'en'
 const th = {
   'common.loading': 'กำลังโหลด...',
   'common.logout': 'ออกจากระบบ',
+  'common.logoutAll': 'ออกจากระบบทุกอุปกรณ์',
   'common.loggedInAs': 'เข้าสู่ระบบเป็น {{username}}',
   'common.unexpectedError': 'เกิดข้อผิดพลาดที่ไม่คาดคิด',
 
@@ -54,6 +55,8 @@ const th = {
   'login.submit': 'เข้าสู่ระบบ',
   'login.submitBusy': 'กำลังเข้าสู่ระบบ...',
   'login.invalidCredentials': 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง',
+  'login.lockedOut': 'บัญชีนี้ถูกล็อกชั่วคราวเนื่องจากพยายามเข้าสู่ระบบผิดหลายครั้งเกินไป กรุณาลองใหม่ภายหลัง',
+  'login.rateLimited': 'มีการพยายามเข้าสู่ระบบถี่เกินไป กรุณารอสักครู่แล้วลองใหม่',
   'login.noAccount': 'ยังไม่มีบัญชี?',
   'login.registerLink': 'สมัครสมาชิก',
 
@@ -189,6 +192,7 @@ const th = {
 const en: Record<keyof typeof th, string> = {
   'common.loading': 'Loading...',
   'common.logout': 'Log out',
+  'common.logoutAll': 'Log out everywhere',
   'common.loggedInAs': 'Logged in as {{username}}',
   'common.unexpectedError': 'Something went wrong',
 
@@ -237,6 +241,8 @@ const en: Record<keyof typeof th, string> = {
   'login.submit': 'Log in',
   'login.submitBusy': 'Logging in...',
   'login.invalidCredentials': 'Incorrect username or password',
+  'login.lockedOut': 'This account is temporarily locked due to too many failed login attempts. Please try again later.',
+  'login.rateLimited': 'Too many login attempts. Please wait a moment and try again.',
   'login.noAccount': "Don't have an account?",
   'login.registerLink': 'Sign up',
 

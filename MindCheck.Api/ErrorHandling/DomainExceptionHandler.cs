@@ -25,6 +25,7 @@ public sealed class DomainExceptionHandler : IExceptionHandler
             InvalidAdminRequestException => StatusCodes.Status400BadRequest,
             FlowTransitionNotFoundException => StatusCodes.Status404NotFound,
             InvalidCredentialsException => StatusCodes.Status401Unauthorized,
+            AccountLockedOutException => StatusCodes.Status423Locked,
             DuplicateUsernameException => StatusCodes.Status409Conflict,
             DuplicateEmailException => StatusCodes.Status409Conflict,
             UserNotFoundException => StatusCodes.Status404NotFound,

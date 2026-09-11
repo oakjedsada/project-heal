@@ -26,10 +26,12 @@ export function RegisterPage() {
     }
 
     setIsLoading(true)
-    const user = await register(username, email, password)
+    const result = await register(username, email, password)
     setIsLoading(false)
-    if (user) {
+    if (result.ok === true) {
       navigate('/')
+    } else if (result.status === 429) {
+      setError(t('login.rateLimited'))
     } else {
       setError(t('register.failedGeneric'))
     }

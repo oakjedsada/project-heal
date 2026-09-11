@@ -67,7 +67,7 @@ public sealed class RegisterUserUseCase
 
         await _userRepository.AddAsync(user, cancellationToken);
 
-        var token = _tokenGenerator.GenerateToken(user.Id, user.Username, user.Role);
+        var token = _tokenGenerator.GenerateToken(user.Id, user.Username, user.Role, user.TokenVersion);
         return new AuthTokenResponse(token, user.Id.Value, user.Username, user.Role.ToString());
     }
 }

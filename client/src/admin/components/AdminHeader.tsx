@@ -13,11 +13,16 @@ const NAV_ITEMS: { to: string; labelKey: TranslationKey }[] = [
 
 export function AdminHeader({ title }: { title: string }) {
   const navigate = useNavigate()
-  const { user, logout } = useAuth()
+  const { user, logout, logoutAllDevices } = useAuth()
   const { t } = useLanguage()
 
   const handleLogout = () => {
     logout()
+    navigate('/login')
+  }
+
+  const handleLogoutAll = async () => {
+    await logoutAllDevices()
     navigate('/login')
   }
 
@@ -34,6 +39,14 @@ export function AdminHeader({ title }: { title: string }) {
               className="underline decoration-stone-300 underline-offset-2 hover:text-stone-700"
             >
               {t('common.logout')}
+            </button>{' '}
+            ·{' '}
+            <button
+              type="button"
+              onClick={handleLogoutAll}
+              className="underline decoration-stone-300 underline-offset-2 hover:text-stone-700"
+            >
+              {t('common.logoutAll')}
             </button>
           </span>
           <LanguageToggle />

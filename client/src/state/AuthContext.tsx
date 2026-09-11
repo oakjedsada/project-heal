@@ -57,13 +57,19 @@ interface AuthTokenResponseLike {
   role?: string
 }
 
+// `ok: false` carries the HTTP status so callers can distinguish "wrong
+// password" (401) from "account locked out" (423) or "rate limited" (429)
+// instead of collapsing every failure into one generic message.
+export type AuthResult = { ok: true; user: AuthUser } | { ok: false; status: number }
+
 interface AuthContextValue {
   token: string | null
   user: AuthUser | null
   authHeader: Record<string, string>
-  register: (username: string, email: string, password: string) => Promise<AuthUser | null>
-  login: (usernameOrEmail: string, password: string) => Promise<AuthUser | null>
+  register: (username: string, email: string, password: string) => Promise<AuthResult>
+  login: (usernameOrEmail: string, password: string) => Promise<AuthResult>
   logout: () => void
+  logoutAllDevices: () => Promise<boolean>
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null)
@@ -85,20 +91,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return user
   }
 
-  const register = async (username: string, email: string, password: string): Promise<AuthUser | null> => {
-    const { data, error } = await apiClient.POST('/api/auth/register', { body: { username, email, password } })
+  const register = async (username: string, email: string, password: string): Promise<AuthResult> => {
+    const { data, error, response } = await apiClient.POST('/api/auth/register', { body: { username, email, password } })
     if (error || !data) {
-      return null
+      return { ok: false, status: response.status }
     }
-    return applyResponse(data)
+    const user = applyResponse(data)
+    return user ? { ok: true, user } : { ok: false, status: response.status }
   }
 
-  const login = async (usernameOrEmail: string, password: string): Promise<AuthUser | null> => {
-    const { data, error } = await apiClient.POST('/api/auth/login', { body: { usernameOrEmail, password } })
+  const login = async (usernameOrEmail: string, password: string): Promise<AuthResult> => {
+    const { data, error, response } = await apiClient.POST('/api/auth/login', { body: { usernameOrEmail, password } })
     if (error || !data) {
-      return null
+      return { ok: false, status: response.status }
     }
-    return applyResponse(data)
+    const user = applyResponse(data)
+    return user ? { ok: true, user } : { ok: false, status: response.status }
   }
 
   const logout = () => {
@@ -106,11 +114,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setAuth(null)
   }
 
+  const logoutAllDevices = async (): Promise<boolean> => {
+    if (!auth) {
+      return false
+    }
+    const { response } = await apiClient.POST('/api/auth/logout-all', { headers: { Authorization: `Bearer ${auth.token}` } })
+    logout()
+    return response.ok
+  }
+
   const authHeader = auth ? { Authorization: `Bearer ${auth.token}` } : {}
 
   return (
     <AuthContext.Provider
-      value={{ token: auth?.token ?? null, user: auth?.user ?? null, authHeader, register, login, logout }}
+      value={{
+        token: auth?.token ?? null,
+        user: auth?.user ?? null,
+        authHeader,
+        register,
+        login,
+        logout,
+        logoutAllDevices,
+      }}
     >
       {children}
     </AuthContext.Provider>

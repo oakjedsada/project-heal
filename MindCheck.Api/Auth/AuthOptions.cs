@@ -23,4 +23,13 @@ public sealed class AuthOptions
     public string BootstrapAdminUsername { get; set; } = string.Empty;
     public string BootstrapAdminEmail { get; set; } = string.Empty;
     public string BootstrapAdminPassword { get; set; } = string.Empty;
+
+    // Account lockout — see ADR 0015.
+    public int MaxFailedLoginAttempts { get; set; } = 5;
+    public int LockoutDurationMinutes { get; set; } = 15;
+
+    // Rate limit applied to the unauthenticated /api/auth/* endpoints, per
+    // caller IP — see ADR 0015.
+    public int AuthRateLimitPermitLimit { get; set; } = 10;
+    public int AuthRateLimitWindowSeconds { get; set; } = 60;
 }
