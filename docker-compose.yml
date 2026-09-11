@@ -24,7 +24,7 @@ services:
       Auth__JwtSigningKey: "local-docker-jwt-signing-key-at-least-32-bytes-long"
       Auth__BootstrapAdminUsername: "admin"
       Auth__BootstrapAdminEmail: "admin@example.com"
-      Auth__BootstrapAdminPassword: "local-docker-admin-password"
+      Auth__BootstrapAdminPassword: "adminadmin"
       Auth__FrontendBaseUrl: "http://localhost:18081"
       # Real SMTP credentials come from a local, gitignored .env file (see
       # .env.example) — left blank here on purpose so this file stays safe to

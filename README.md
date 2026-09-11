@@ -156,7 +156,7 @@ docker compose up --build
 
 - Client: http://localhost:18081
 - Api + Swagger: http://localhost:18080/swagger
-- Bootstrap admin login (this compose file only, not a real secret): username `admin`, password `local-docker-admin-password` — seeded once at first startup; after that, manage admins via the "จัดการผู้ใช้" (user management) admin page, not this config value
+- Bootstrap admin login (this compose file only, not a real secret): username `admin`, password `adminadmin` — seeded once at first startup; after that, manage admins via the "จัดการผู้ใช้" (user management) admin page, not this config value
 
 Or run the .NET side locally against just a containerized Postgres:
 

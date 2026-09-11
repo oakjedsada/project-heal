@@ -12,7 +12,7 @@ end, including the sample-data button reaching the emergency page.
 
 - Client: http://localhost:18081
 - Api + Swagger: http://localhost:18080/swagger
-- Bootstrap admin login (this compose file only): username `admin`, password `local-docker-admin-password` — used once to seed the first admin account; manage further admins via the in-app user management page afterward
+- Bootstrap admin login (this compose file only): username `admin`, password `adminadmin` — used once to seed the first admin account; manage further admins via the in-app user management page afterward
 
 `db` alone (for local `dotnet run` against a real Postgres instead of the full
 container stack) is still `docker compose up -d db`, unchanged from earlier
