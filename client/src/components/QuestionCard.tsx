@@ -10,13 +10,17 @@ interface QuestionCardProps {
 
 export function QuestionCard({ question, selectedChoiceId, disabled, onSelect }: QuestionCardProps) {
   const choices = [...(question.choices ?? [])].sort((a, b) => (a.orderNo ?? 0) - (b.orderNo ?? 0))
+  const headingId = `question-heading-${question.questionId}`
 
   return (
-    <fieldset
+    <div
+      role="radiogroup"
+      aria-labelledby={headingId}
       className="rounded-2xl border border-pink-100 bg-white p-5 shadow-sm shadow-pink-900/5"
-      disabled={disabled}
     >
-      <legend className="mb-4 text-lg font-medium leading-relaxed text-stone-900">{question.text}</legend>
+      <p id={headingId} className="mb-4 text-lg font-medium leading-relaxed text-stone-900">
+        {question.text}
+      </p>
       <div className="flex flex-col gap-2.5">
         {choices.map((choice) => {
           const id = `choice-${choice.choiceId}`
@@ -53,6 +57,6 @@ export function QuestionCard({ question, selectedChoiceId, disabled, onSelect }:
           )
         })}
       </div>
-    </fieldset>
+    </div>
   )
 }
