@@ -1,10 +1,12 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { HeartIcon } from '../components/icons'
+import { useLanguage } from '../state/LanguageContext'
 import { useSession } from '../state/SessionContext'
 
 export function ConsentPage() {
   const navigate = useNavigate()
+  const { t } = useLanguage()
   const { startSession, runSampleAutoFill, isLoading, error } = useSession()
   const [busyAction, setBusyAction] = useState<'start' | 'sample' | null>(null)
 
@@ -42,22 +44,19 @@ export function ConsentPage() {
           <HeartIcon className="h-5 w-5" />
         </span>
         <h1 className="text-2xl font-semibold tracking-tight text-stone-900">
-          เช็กความเครียด <br className="sm:hidden" />
-          และสุขภาพใจเบื้องต้น
+          {t('consent.titleLine1')} <br className="sm:hidden" />
+          {t('consent.titleLine2')}
         </h1>
-        <p className="mt-2 text-sm text-stone-500">ใช้เวลาไม่กี่นาที คำตอบของคุณผูกกับบัญชีที่เข้าสู่ระบบอยู่</p>
+        <p className="mt-2 text-sm text-stone-500">{t('consent.subtitle')}</p>
       </div>
 
       <div className="rounded-2xl border border-pink-100 bg-white p-5 text-sm leading-relaxed text-stone-600 shadow-sm shadow-pink-900/5">
         <p className="mb-3">
-          MindCheck เป็นแบบคัดกรองความเครียดและความเสี่ยงซึมเศร้าเบื้องต้น{' '}
-          <strong className="text-stone-800">สร้างขึ้นเพื่อสาธิตการออกแบบระบบเท่านั้น</strong>{' '}
-          ไม่ใช่เครื่องมือวินิจฉัยทางการแพทย์และไม่สามารถใช้แทนคำแนะนำจากผู้เชี่ยวชาญได้
+          {t('consent.descriptionBefore')}
+          <strong className="text-stone-800">{t('consent.descriptionBold')}</strong>
+          {t('consent.descriptionAfter')}
         </p>
-        <p>
-          คำตอบของคุณจะถูกบันทึกไว้ชั่วคราวเพื่อประมวลผลแบบทดสอบเท่านั้น หากพบสัญญาณความเสี่ยงสูง
-          ระบบจะแสดงช่องทางขอความช่วยเหลือทันที
-        </p>
+        <p>{t('consent.description2')}</p>
       </div>
 
       {error && (
@@ -73,7 +72,7 @@ export function ConsentPage() {
           disabled={isLoading}
           className="min-h-11 rounded-full bg-pink-500 px-6 py-3 font-medium text-white shadow-md shadow-pink-900/15 transition-all hover:-translate-y-0.5 hover:bg-pink-600 hover:shadow-lg hover:shadow-pink-900/20 disabled:translate-y-0 disabled:opacity-60 disabled:shadow-none"
         >
-          {busyAction === 'start' ? 'กำลังเริ่ม...' : 'ยินยอมและเริ่มทำแบบประเมิน'}
+          {busyAction === 'start' ? t('consent.startButtonBusy') : t('consent.startButton')}
         </button>
 
         <button
@@ -82,7 +81,7 @@ export function ConsentPage() {
           disabled={isLoading}
           className="min-h-11 rounded-full border border-stone-300 bg-white px-6 py-3 font-medium text-stone-700 transition-colors hover:border-pink-200 hover:bg-pink-50/50 disabled:opacity-60"
         >
-          {busyAction === 'sample' ? 'กำลังจำลองคำตอบ...' : 'ลองด้วยข้อมูลตัวอย่าง'}
+          {busyAction === 'sample' ? t('consent.sampleButtonBusy') : t('consent.sampleButton')}
         </button>
       </div>
     </div>

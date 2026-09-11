@@ -1,10 +1,12 @@
 import { useEffect } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom'
 import { clearStoredSession } from '../state/localPersistence'
+import { useLanguage } from '../state/LanguageContext'
 import { useSessionResult } from '../state/useSessionResult'
 
 export function ResultPage() {
   const navigate = useNavigate()
+  const { t } = useLanguage()
   const { result, isLoading, error, sessionId } = useSessionResult()
 
   useEffect(() => {
@@ -24,9 +26,9 @@ export function ResultPage() {
 
   return (
     <div className="flex flex-col gap-4">
-      <h1 className="text-2xl font-semibold tracking-tight text-stone-900">ผลการประเมิน</h1>
+      <h1 className="text-2xl font-semibold tracking-tight text-stone-900">{t('result.title')}</h1>
 
-      {isLoading && <p className="text-stone-500">กำลังโหลดผลลัพธ์...</p>}
+      {isLoading && <p className="text-stone-500">{t('result.loading')}</p>}
 
       {error && (
         <p role="alert" className="rounded-xl bg-red-50 px-3 py-2 text-sm text-red-800">
@@ -34,7 +36,7 @@ export function ResultPage() {
         </p>
       )}
 
-      {result && !result.isComplete && <p className="text-stone-500">ยังทำแบบประเมินไม่เสร็จ</p>}
+      {result && !result.isComplete && <p className="text-stone-500">{t('result.notComplete')}</p>}
 
       {result?.results?.map((instrumentResult, index) => (
         <div
@@ -55,7 +57,7 @@ export function ResultPage() {
         onClick={handleRestart}
         className="min-h-11 rounded-full border border-stone-300 bg-white px-6 py-3 font-medium text-stone-700 transition-colors hover:border-pink-200 hover:bg-pink-50/50"
       >
-        เริ่มทำแบบประเมินใหม่
+        {t('result.restart')}
       </button>
     </div>
   )

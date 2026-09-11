@@ -1,11 +1,14 @@
 import { useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { apiClient } from '../api/client'
+import { LanguageToggle } from '../components/LanguageToggle'
 import { HeartIcon } from '../components/icons'
+import { useLanguage } from '../state/LanguageContext'
 
 export function ResetPasswordPage() {
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
+  const { t } = useLanguage()
   const token = searchParams.get('token') ?? ''
 
   const [password, setPassword] = useState('')
@@ -18,7 +21,7 @@ export function ResetPasswordPage() {
     setError(null)
 
     if (password !== confirmPassword) {
-      setError('รหัสผ่านทั้งสองช่องไม่ตรงกัน')
+      setError(t('register.passwordMismatch'))
       return
     }
 
@@ -29,7 +32,7 @@ export function ResetPasswordPage() {
     setIsLoading(false)
 
     if (apiError || !response.ok) {
-      setError('ลิงก์นี้ไม่ถูกต้องหรือหมดอายุแล้ว ลองขอลิงก์ใหม่อีกครั้ง')
+      setError(t('resetPassword.failedGeneric'))
       return
     }
 
@@ -39,10 +42,13 @@ export function ResetPasswordPage() {
   if (!token) {
     return (
       <div className="mx-auto flex min-h-screen max-w-sm flex-col justify-center px-4 py-10">
-        <p className="rounded-xl bg-red-50 px-3 py-2 text-sm text-red-800">ไม่พบลิงก์รีเซ็ตรหัสผ่านที่ถูกต้อง</p>
+        <div className="mb-3 flex justify-end">
+          <LanguageToggle />
+        </div>
+        <p className="rounded-xl bg-red-50 px-3 py-2 text-sm text-red-800">{t('resetPassword.invalidLink')}</p>
         <p className="mt-4 text-center text-sm text-stone-500">
           <Link to="/forgot-password" className="font-medium text-pink-600 underline decoration-pink-300 underline-offset-2">
-            ขอลิงก์รีเซ็ตรหัสผ่านใหม่
+            {t('resetPassword.requestNewLink')}
           </Link>
         </p>
       </div>
@@ -51,18 +57,21 @@ export function ResetPasswordPage() {
 
   return (
     <div className="mx-auto flex min-h-screen max-w-sm flex-col justify-center px-4 py-10">
-      <span className="mb-3 inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-pink-100 text-pink-500">
-        <HeartIcon className="h-5 w-5" />
-      </span>
-      <h1 className="mb-1 text-xl font-semibold tracking-tight text-stone-900">ตั้งรหัสผ่านใหม่</h1>
-      <p className="mb-6 text-sm text-stone-500">กรอกรหัสผ่านใหม่สำหรับบัญชีของคุณ</p>
+      <div className="mb-3 flex items-center justify-between">
+        <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-pink-100 text-pink-500">
+          <HeartIcon className="h-5 w-5" />
+        </span>
+        <LanguageToggle />
+      </div>
+      <h1 className="mb-1 text-xl font-semibold tracking-tight text-stone-900">{t('resetPassword.title')}</h1>
+      <p className="mb-6 text-sm text-stone-500">{t('resetPassword.subtitle')}</p>
 
       <form
         onSubmit={handleSubmit}
         className="flex flex-col gap-3 rounded-2xl border border-pink-100 bg-white p-5 shadow-sm shadow-pink-900/5"
       >
         <label htmlFor="reset-password" className="text-sm font-medium text-stone-700">
-          รหัสผ่านใหม่ (อย่างน้อย 8 ตัวอักษร)
+          {t('resetPassword.newPassword')}
         </label>
         <input
           id="reset-password"
@@ -76,7 +85,7 @@ export function ResetPasswordPage() {
         />
 
         <label htmlFor="reset-confirm-password" className="text-sm font-medium text-stone-700">
-          ยืนยันรหัสผ่านใหม่
+          {t('resetPassword.confirmPassword')}
         </label>
         <input
           id="reset-confirm-password"
@@ -99,7 +108,7 @@ export function ResetPasswordPage() {
           disabled={isLoading}
           className="min-h-11 rounded-full bg-pink-500 px-4 py-3 font-medium text-white transition-colors hover:bg-pink-600 disabled:opacity-60"
         >
-          {isLoading ? 'กำลังบันทึก...' : 'ตั้งรหัสผ่านใหม่'}
+          {isLoading ? t('resetPassword.submitBusy') : t('resetPassword.submit')}
         </button>
       </form>
     </div>

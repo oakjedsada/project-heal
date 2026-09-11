@@ -1,9 +1,11 @@
 import { Navigate, useNavigate } from 'react-router-dom'
 import { clearStoredSession } from '../state/localPersistence'
+import { useLanguage } from '../state/LanguageContext'
 import { useSessionResult } from '../state/useSessionResult'
 
 export function EmergencyPage() {
   const navigate = useNavigate()
+  const { t } = useLanguage()
   const { result, isLoading, error, sessionId } = useSessionResult()
 
   if (!sessionId) {
@@ -18,13 +20,10 @@ export function EmergencyPage() {
   return (
     <div className="flex flex-col gap-4">
       <div role="alert" className="rounded-2xl border-2 border-red-800 bg-red-700 p-5 text-white shadow-lg shadow-red-900/20">
-        <h1 className="text-xl font-bold leading-snug">พบสัญญาณความเสี่ยงที่ควรได้รับความช่วยเหลือทันที</h1>
-        <p className="mt-2 text-sm leading-relaxed text-red-50">
-          ผลการประเมินบ่งชี้ว่าคุณอาจกำลังเผชิญความเสี่ยงที่ต้องการความช่วยเหลือจากผู้เชี่ยวชาญโดยเร็ว
-          กรุณาติดต่อช่องทางด้านล่างนี้
-        </p>
+        <h1 className="text-xl font-bold leading-snug">{t('emergency.title')}</h1>
+        <p className="mt-2 text-sm leading-relaxed text-red-50">{t('emergency.description')}</p>
 
-        {isLoading && <p className="mt-4 text-sm">กำลังโหลดช่องทางช่วยเหลือ...</p>}
+        {isLoading && <p className="mt-4 text-sm">{t('emergency.loadingResources')}</p>}
 
         <ul className="mt-4 flex flex-col gap-2">
           {result?.helpResources?.map((resource, index) => (
@@ -49,7 +48,7 @@ export function EmergencyPage() {
 
       {result?.results && result.results.length > 0 && (
         <details className="rounded-2xl border border-stone-200 bg-white p-4 text-sm text-stone-600 shadow-sm shadow-stone-900/5">
-          <summary className="cursor-pointer font-medium text-stone-900">ดูรายละเอียดผลการประเมิน</summary>
+          <summary className="cursor-pointer font-medium text-stone-900">{t('emergency.viewDetails')}</summary>
           <div className="mt-3 flex flex-col gap-3">
             {result.results.map((instrumentResult, index) => (
               <div key={`${instrumentResult.instrumentCode}-${index}`}>
@@ -69,7 +68,7 @@ export function EmergencyPage() {
         onClick={handleRestart}
         className="min-h-11 rounded-full border border-stone-300 bg-white px-6 py-3 font-medium text-stone-700 transition-colors hover:bg-stone-50"
       >
-        เริ่มทำแบบประเมินใหม่
+        {t('result.restart')}
       </button>
     </div>
   )

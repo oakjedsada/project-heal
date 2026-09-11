@@ -1,16 +1,20 @@
 import { NavLink, useNavigate } from 'react-router-dom'
+import { LanguageToggle } from '../../components/LanguageToggle'
 import { useAuth } from '../../state/AuthContext'
+import { useLanguage } from '../../state/LanguageContext'
+import type { TranslationKey } from '../../i18n/translations'
 
-const NAV_ITEMS = [
-  { to: '/admin/dashboard', label: 'สถิติรวม' },
-  { to: '/admin/instruments/new', label: 'สร้างแบบประเมิน' },
-  { to: '/admin/flow-transitions', label: 'เส้นทางแบบประเมิน' },
-  { to: '/admin/users', label: 'จัดการผู้ใช้' },
+const NAV_ITEMS: { to: string; labelKey: TranslationKey }[] = [
+  { to: '/admin/dashboard', labelKey: 'admin.nav.dashboard' },
+  { to: '/admin/instruments/new', labelKey: 'admin.nav.createInstrument' },
+  { to: '/admin/flow-transitions', labelKey: 'admin.nav.flowTransitions' },
+  { to: '/admin/users', labelKey: 'admin.nav.users' },
 ]
 
 export function AdminHeader({ title }: { title: string }) {
   const navigate = useNavigate()
   const { user, logout } = useAuth()
+  const { t } = useLanguage()
 
   const handleLogout = () => {
     logout()
@@ -21,16 +25,19 @@ export function AdminHeader({ title }: { title: string }) {
     <div className="mb-6">
       <div className="mb-3 flex flex-wrap items-center justify-between gap-x-4 gap-y-1">
         <h1 className="text-xl font-semibold tracking-tight text-stone-900">{title}</h1>
-        <span className="text-xs text-stone-500">
-          เข้าสู่ระบบเป็น {user?.username} ·{' '}
-          <button
-            type="button"
-            onClick={handleLogout}
-            className="underline decoration-stone-300 underline-offset-2 hover:text-stone-700"
-          >
-            ออกจากระบบ
-          </button>
-        </span>
+        <div className="flex items-center gap-3">
+          <span className="text-xs text-stone-500">
+            {t('common.loggedInAs', { username: user?.username ?? '' })} ·{' '}
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="underline decoration-stone-300 underline-offset-2 hover:text-stone-700"
+            >
+              {t('common.logout')}
+            </button>
+          </span>
+          <LanguageToggle />
+        </div>
       </div>
       <nav className="flex flex-wrap gap-1 rounded-full bg-pink-50 p-1 text-sm">
         {NAV_ITEMS.map((item) => (
@@ -43,7 +50,7 @@ export function AdminHeader({ title }: { title: string }) {
               }`
             }
           >
-            {item.label}
+            {t(item.labelKey)}
           </NavLink>
         ))}
       </nav>

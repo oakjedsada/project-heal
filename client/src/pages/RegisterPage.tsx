@@ -1,11 +1,14 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { LanguageToggle } from '../components/LanguageToggle'
 import { HeartIcon } from '../components/icons'
 import { useAuth } from '../state/AuthContext'
+import { useLanguage } from '../state/LanguageContext'
 
 export function RegisterPage() {
   const navigate = useNavigate()
   const { register } = useAuth()
+  const { t } = useLanguage()
   const [username, setUsername] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -18,7 +21,7 @@ export function RegisterPage() {
     setError(null)
 
     if (password !== confirmPassword) {
-      setError('รหัสผ่านทั้งสองช่องไม่ตรงกัน')
+      setError(t('register.passwordMismatch'))
       return
     }
 
@@ -28,23 +31,26 @@ export function RegisterPage() {
     if (user) {
       navigate('/')
     } else {
-      setError('สมัครสมาชิกไม่สำเร็จ ชื่อผู้ใช้/อีเมลอาจถูกใช้แล้ว อีเมลไม่ถูกต้อง หรือรหัสผ่านสั้นเกินไป (อย่างน้อย 8 ตัวอักษร)')
+      setError(t('register.failedGeneric'))
     }
   }
 
   return (
     <div className="mx-auto flex min-h-screen max-w-sm flex-col justify-center px-4 py-10">
-      <span className="mb-3 inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-pink-100 text-pink-500">
-        <HeartIcon className="h-5 w-5" />
-      </span>
+      <div className="mb-3 flex items-center justify-between">
+        <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-pink-100 text-pink-500">
+          <HeartIcon className="h-5 w-5" />
+        </span>
+        <LanguageToggle />
+      </div>
       <h1 className="mb-1 text-xl font-semibold tracking-tight text-stone-900">MindCheck</h1>
-      <p className="mb-6 text-sm text-stone-500">สมัครสมาชิกเพื่อเริ่มทำแบบประเมิน</p>
+      <p className="mb-6 text-sm text-stone-500">{t('register.subtitle')}</p>
       <form
         onSubmit={handleSubmit}
         className="flex flex-col gap-3 rounded-2xl border border-pink-100 bg-white p-5 shadow-sm shadow-pink-900/5"
       >
         <label htmlFor="register-username" className="text-sm font-medium text-stone-700">
-          ชื่อผู้ใช้ (อย่างน้อย 3 ตัวอักษร)
+          {t('register.username')}
         </label>
         <input
           id="register-username"
@@ -57,7 +63,7 @@ export function RegisterPage() {
         />
 
         <label htmlFor="register-email" className="text-sm font-medium text-stone-700">
-          อีเมล
+          {t('register.email')}
         </label>
         <input
           id="register-email"
@@ -69,7 +75,7 @@ export function RegisterPage() {
         />
 
         <label htmlFor="register-password" className="text-sm font-medium text-stone-700">
-          รหัสผ่าน (อย่างน้อย 8 ตัวอักษร)
+          {t('register.password')}
         </label>
         <input
           id="register-password"
@@ -81,7 +87,7 @@ export function RegisterPage() {
         />
 
         <label htmlFor="register-confirm-password" className="text-sm font-medium text-stone-700">
-          ยืนยันรหัสผ่าน
+          {t('register.confirmPassword')}
         </label>
         <input
           id="register-confirm-password"
@@ -103,13 +109,13 @@ export function RegisterPage() {
           disabled={isLoading}
           className="min-h-11 rounded-full bg-pink-500 px-4 py-3 font-medium text-white transition-colors hover:bg-pink-600 disabled:opacity-60"
         >
-          {isLoading ? 'กำลังสมัครสมาชิก...' : 'สมัครสมาชิก'}
+          {isLoading ? t('register.submitBusy') : t('register.submit')}
         </button>
       </form>
       <p className="mt-4 text-center text-sm text-stone-500">
-        มีบัญชีอยู่แล้ว?{' '}
+        {t('register.haveAccount')}{' '}
         <Link to="/login" className="font-medium text-pink-600 underline decoration-pink-300 underline-offset-2">
-          เข้าสู่ระบบ
+          {t('register.loginLink')}
         </Link>
       </p>
     </div>

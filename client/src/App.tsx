@@ -16,6 +16,7 @@ import { ResetPasswordPage } from './pages/ResetPasswordPage'
 import { ResultPage } from './pages/ResultPage'
 import { AuthProvider } from './state/AuthContext'
 import { AuthRouteGuard } from './state/AuthRouteGuard'
+import { LanguageProvider } from './state/LanguageContext'
 import { SessionProvider } from './state/SessionContext'
 
 function PublicApp() {
@@ -111,15 +112,17 @@ function AdminApp() {
 
 export default function App() {
   return (
-    <AuthProvider>
-      <Routes>
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-        <Route path="/reset-password" element={<ResetPasswordPage />} />
-        <Route path="/admin/*" element={<AdminApp />} />
-        <Route path="/*" element={<PublicApp />} />
-      </Routes>
-    </AuthProvider>
+    <LanguageProvider>
+      <AuthProvider>
+        <Routes>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
+          <Route path="/admin/*" element={<AdminApp />} />
+          <Route path="/*" element={<PublicApp />} />
+        </Routes>
+      </AuthProvider>
+    </LanguageProvider>
   )
 }

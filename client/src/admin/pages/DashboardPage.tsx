@@ -14,6 +14,7 @@ import {
 import { apiClient } from '../../api/client'
 import type { components } from '../../api/schema'
 import { useAuth } from '../../state/AuthContext'
+import { useLanguage } from '../../state/LanguageContext'
 import { AdminHeader } from '../components/AdminHeader'
 
 type DashboardStatsDto = components['schemas']['DashboardStatsDto']
@@ -38,6 +39,7 @@ function pivotLevelBreakdown(stats: DashboardStatsDto) {
 
 export function DashboardPage() {
   const { authHeader } = useAuth()
+  const { t } = useLanguage()
   const [stats, setStats] = useState<DashboardStatsDto | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -47,13 +49,13 @@ export function DashboardPage() {
       .GET('/api/admin/dashboard/stats', { headers: authHeader })
       .then(({ data, error: apiError }) => {
         if (apiError || !data) {
-          setError('โหลดสถิติไม่สำเร็จ')
+          setError(t('admin.dashboard.loadFailed'))
           return
         }
         setStats(data)
       })
       .finally(() => setIsLoading(false))
-  }, [authHeader])
+  }, [authHeader, t])
 
   const hasBreakdown = (stats?.levelBreakdown?.length ?? 0) > 0
   const hasTrend = (stats?.weeklyTrend?.length ?? 0) > 0
@@ -61,15 +63,15 @@ export function DashboardPage() {
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-8">
-      <AdminHeader title="สถิติรวม (ไม่ระบุตัวตน)" />
+      <AdminHeader title={t('admin.dashboard.title')} />
 
-      {isLoading && <p className="text-stone-500">กำลังโหลด...</p>}
+      {isLoading && <p className="text-stone-500">{t('common.loading')}</p>}
       {error && <p className="rounded-xl bg-red-50 px-3 py-2 text-sm text-red-800">{error}</p>}
 
       {!isLoading && !error && (
         <div className="flex flex-col gap-6">
           <section className="rounded-2xl border border-pink-100 bg-white p-4 shadow-sm shadow-pink-900/5">
-            <h2 className="mb-3 font-medium text-stone-900">จำนวน session แยกตามระดับผล</h2>
+            <h2 className="mb-3 font-medium text-stone-900">{t('admin.dashboard.byLevel')}</h2>
             {hasBreakdown ? (
               <div className="h-72 w-full">
                 <ResponsiveContainer width="100%" height="100%">
@@ -86,12 +88,12 @@ export function DashboardPage() {
                 </ResponsiveContainer>
               </div>
             ) : (
-              <p className="text-sm text-stone-500">ยังไม่มีข้อมูล session ที่ทำแบบประเมินจนจบ</p>
+              <p className="text-sm text-stone-500">{t('admin.dashboard.noBreakdownData')}</p>
             )}
           </section>
 
           <section className="rounded-2xl border border-pink-100 bg-white p-4 shadow-sm shadow-pink-900/5">
-            <h2 className="mb-3 font-medium text-stone-900">แนวโน้มจำนวน session รายสัปดาห์</h2>
+            <h2 className="mb-3 font-medium text-stone-900">{t('admin.dashboard.weeklyTrend')}</h2>
             {hasTrend ? (
               <div className="h-72 w-full">
                 <ResponsiveContainer width="100%" height="100%">
@@ -105,7 +107,7 @@ export function DashboardPage() {
                 </ResponsiveContainer>
               </div>
             ) : (
-              <p className="text-sm text-stone-500">ยังไม่มี session เริ่มต้นเลย</p>
+              <p className="text-sm text-stone-500">{t('admin.dashboard.noTrendData')}</p>
             )}
           </section>
         </div>

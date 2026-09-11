@@ -3,10 +3,12 @@ import { Navigate, useNavigate } from 'react-router-dom'
 import { ProgressIndicator } from '../components/ProgressIndicator'
 import { QuestionCard } from '../components/QuestionCard'
 import { loadSessionId } from '../state/localPersistence'
+import { useLanguage } from '../state/LanguageContext'
 import { useSession } from '../state/SessionContext'
 
 export function AssessmentPage() {
   const navigate = useNavigate()
+  const { t } = useLanguage()
   const {
     sessionId,
     history,
@@ -65,7 +67,7 @@ export function AssessmentPage() {
 
       {rejectedNotice && (
         <p role="alert" className="rounded-xl bg-amber-50 px-3 py-2 text-sm text-amber-900">
-          คำตอบข้อนี้ถูกประมวลผลไปแล้วและไม่สามารถแก้ไขได้อีก
+          {t('assessment.rejectedNotice')}
         </p>
       )}
 
@@ -77,7 +79,7 @@ export function AssessmentPage() {
           onSelect={handleSelect}
         />
       ) : (
-        <p className="text-stone-500">กำลังโหลดคำถาม...</p>
+        <p className="text-stone-500">{t('assessment.loadingQuestion')}</p>
       )}
 
       <div className="flex justify-between">
@@ -87,7 +89,7 @@ export function AssessmentPage() {
           disabled={!canGoBack || isLoading}
           className="min-h-11 rounded-full border border-stone-300 bg-white px-5 py-2 text-stone-700 transition-colors hover:border-pink-200 hover:bg-pink-50/50 disabled:opacity-40"
         >
-          ย้อนกลับ
+          {t('assessment.back')}
         </button>
         <button
           type="button"
@@ -95,12 +97,14 @@ export function AssessmentPage() {
           disabled={!canGoForward || isLoading}
           className="min-h-11 rounded-full border border-stone-300 bg-white px-5 py-2 text-stone-700 transition-colors hover:border-pink-200 hover:bg-pink-50/50 disabled:opacity-40"
         >
-          ถัดไป
+          {t('assessment.forward')}
         </button>
       </div>
 
       <p className="text-center text-xs text-stone-400">
-        {isAtTail ? 'กำลังทำข้อล่าสุด' : `กำลังดูข้อที่ ${viewIndex + 1} จากทั้งหมด ${history.length} ข้อที่ทำมา`}
+        {isAtTail
+          ? t('assessment.atLatest')
+          : t('assessment.viewingItem', { current: viewIndex + 1, total: history.length })}
       </p>
     </div>
   )

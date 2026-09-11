@@ -1,4 +1,6 @@
 import type { components } from '../../api/schema'
+import { useLanguage } from '../../state/LanguageContext'
+import type { TranslationKey } from '../../i18n/translations'
 
 type FlowTransitionDto = components['schemas']['FlowTransitionDto']
 type InstrumentSummaryDto = components['schemas']['InstrumentSummaryDto']
@@ -20,20 +22,21 @@ const ROW_HEIGHT = 90
 const NODE_WIDTH = 140
 const NODE_HEIGHT = 48
 
-function conditionLabel(t: FlowTransitionDto): string {
-  switch (t.conditionType) {
+function conditionLabel(transition: FlowTransitionDto, t: (key: TranslationKey) => string): string {
+  switch (transition.conditionType) {
     case 'Always':
-      return 'เสมอ'
+      return t('admin.flow.always')
     case 'ScoreLevelEquals':
-      return `level = "${t.conditionValue}"`
+      return `level = "${transition.conditionValue}"`
     case 'QuestionScoreAtLeast':
-      return `Q${t.questionId} ≥ ${t.conditionValue}`
+      return `Q${transition.questionId} ≥ ${transition.conditionValue}`
     default:
-      return t.conditionType ?? ''
+      return transition.conditionType ?? ''
   }
 }
 
 export function FlowDiagram({ instruments, transitions }: FlowDiagramProps) {
+  const { t } = useLanguage()
   const START_KEY = '__start__'
 
   const byFromKey = new Map<string, FlowTransitionDto[]>()
@@ -61,7 +64,7 @@ export function FlowDiagram({ instruments, transitions }: FlowDiagramProps) {
     })
   }
 
-  place(START_KEY, 'เริ่มต้น session', 0)
+  place(START_KEY, t('admin.flow.sessionStartLabel'), 0)
 
   const queue = [START_KEY]
   while (queue.length > 0) {
@@ -96,7 +99,7 @@ export function FlowDiagram({ instruments, transitions }: FlowDiagramProps) {
       viewBox={`0 0 ${width} ${height}`}
       className="w-full rounded-2xl border border-pink-100 bg-white"
       role="img"
-      aria-label="แผนภาพเส้นทางแบบประเมิน"
+      aria-label={t('admin.flow.diagramLabel')}
     >
       <defs>
         <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
@@ -104,9 +107,9 @@ export function FlowDiagram({ instruments, transitions }: FlowDiagramProps) {
         </marker>
       </defs>
 
-      {transitions.map((t) => {
-        const fromKey = t.fromInstrumentId == null ? START_KEY : `i-${t.fromInstrumentId}`
-        const toKey = `i-${t.toInstrumentId}`
+      {transitions.map((transition) => {
+        const fromKey = transition.fromInstrumentId == null ? START_KEY : `i-${transition.fromInstrumentId}`
+        const toKey = `i-${transition.toInstrumentId}`
         const from = nodes.get(fromKey)
         const to = nodes.get(toKey)
         if (!from || !to) return null
@@ -119,7 +122,7 @@ export function FlowDiagram({ instruments, transitions }: FlowDiagramProps) {
         const midY = (y1 + y2) / 2
 
         return (
-          <g key={t.id}>
+          <g key={transition.id}>
             <path
               d={`M ${x1} ${y1} C ${midX} ${y1}, ${midX} ${y2}, ${x2} ${y2}`}
               fill="none"
@@ -129,7 +132,7 @@ export function FlowDiagram({ instruments, transitions }: FlowDiagramProps) {
             />
             <rect x={midX - 55} y={midY - 10} width={110} height={20} fill="white" opacity={0.9} />
             <text x={midX} y={midY + 4} textAnchor="middle" fontSize="11" fill="#44403c">
-              {conditionLabel(t)}
+              {conditionLabel(transition, t)}
             </text>
           </g>
         )

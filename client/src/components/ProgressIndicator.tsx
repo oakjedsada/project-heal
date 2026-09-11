@@ -1,3 +1,5 @@
+import { useLanguage } from '../state/LanguageContext'
+
 interface ProgressIndicatorProps {
   answeredCount: number
   isComplete: boolean
@@ -8,6 +10,7 @@ interface ProgressIndicatorProps {
 // this renders an open-ended "how far so far" indicator rather than a
 // misleading "N of M" percentage.
 export function ProgressIndicator({ answeredCount, isComplete }: ProgressIndicatorProps) {
+  const { t } = useLanguage()
   const widthPercent = isComplete ? 100 : Math.min(92, (answeredCount / (answeredCount + 2)) * 100)
 
   return (
@@ -24,7 +27,7 @@ export function ProgressIndicator({ answeredCount, isComplete }: ProgressIndicat
         </span>
       </div>
       <p className="mt-1.5 text-sm text-stone-500">
-        {isComplete ? 'ทำแบบประเมินครบแล้ว' : `ข้อที่ ${answeredCount + 1}`}
+        {isComplete ? t('progress.complete') : t('progress.item', { n: answeredCount + 1 })}
       </p>
     </div>
   )

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { apiClient } from '../../api/client'
 import type { components } from '../../api/schema'
 import { useAuth } from '../../state/AuthContext'
+import { useLanguage } from '../../state/LanguageContext'
 import { AdminHeader } from '../components/AdminHeader'
 
 type UserDto = components['schemas']['UserDto']
@@ -11,6 +12,7 @@ const ROLES = ['User', 'Admin']
 
 export function UserManagementPage() {
   const { authHeader } = useAuth()
+  const { t, language } = useLanguage()
 
   const [users, setUsers] = useState<UserDto[]>([])
   const [error, setError] = useState<string | null>(null)
@@ -28,12 +30,12 @@ export function UserManagementPage() {
     setError(null)
     const { data, error: apiError } = await apiClient.GET('/api/admin/users', { headers: authHeader })
     if (apiError) {
-      setError('โหลดรายชื่อผู้ใช้ไม่สำเร็จ')
+      setError(t('admin.users.loadFailed'))
     } else {
       setUsers(data ?? [])
     }
     setIsLoading(false)
-  }, [authHeader])
+  }, [authHeader, t])
 
   useEffect(() => {
     void loadUsers()
@@ -53,7 +55,7 @@ export function UserManagementPage() {
 
     if (apiError || !response.ok) {
       const detail = (apiError as { detail?: string } | undefined)?.detail
-      setFormError(detail ?? `สร้างผู้ใช้ไม่สำเร็จ (${response.status})`)
+      setFormError(detail ?? t('admin.users.createFailed', { status: response.status }))
       return
     }
 
@@ -72,7 +74,7 @@ export function UserManagementPage() {
     })
     if (apiError || !response.ok) {
       const detail = (apiError as { detail?: string } | undefined)?.detail
-      setError(detail ?? `ลบผู้ใช้ไม่สำเร็จ (${response.status})`)
+      setError(detail ?? t('admin.users.deleteFailed', { status: response.status }))
       return
     }
     await loadUsers()
@@ -80,15 +82,15 @@ export function UserManagementPage() {
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-8">
-      <AdminHeader title="จัดการผู้ใช้" />
+      <AdminHeader title={t('admin.users.title')} />
 
       {error && <p className="mb-4 rounded-xl bg-red-50 px-3 py-2 text-sm text-red-800">{error}</p>}
 
       <section className="mb-6 rounded-2xl border border-pink-100 bg-white p-4 shadow-sm shadow-pink-900/5">
-        <h2 className="mb-3 font-medium text-stone-900">เพิ่มผู้ใช้ใหม่</h2>
+        <h2 className="mb-3 font-medium text-stone-900">{t('admin.users.addNew')}</h2>
         <form onSubmit={handleCreate} className="grid grid-cols-2 gap-3">
           <label className="flex flex-col gap-1 text-sm text-stone-700">
-            ชื่อผู้ใช้
+            {t('admin.users.username')}
             <input
               required
               autoComplete="off"
@@ -98,7 +100,7 @@ export function UserManagementPage() {
             />
           </label>
           <label className="flex flex-col gap-1 text-sm text-stone-700">
-            อีเมล
+            {t('admin.users.email')}
             <input
               required
               type="email"
@@ -109,7 +111,7 @@ export function UserManagementPage() {
             />
           </label>
           <label className="flex flex-col gap-1 text-sm text-stone-700">
-            รหัสผ่าน
+            {t('admin.users.password')}
             <input
               required
               type="password"
@@ -120,7 +122,7 @@ export function UserManagementPage() {
             />
           </label>
           <label className="col-span-2 flex flex-col gap-1 text-sm text-stone-700">
-            Role
+            {t('admin.users.role')}
             <select value={role} onChange={(e) => setRole(e.target.value)} className={inputClass}>
               {ROLES.map((r) => (
                 <option key={r} value={r}>
@@ -137,15 +139,15 @@ export function UserManagementPage() {
             disabled={isSubmitting}
             className="col-span-2 min-h-11 rounded-full bg-pink-500 px-4 py-2 font-medium text-white transition-colors hover:bg-pink-600 disabled:opacity-60"
           >
-            {isSubmitting ? 'กำลังบันทึก...' : 'เพิ่มผู้ใช้'}
+            {isSubmitting ? t('admin.users.addSubmitBusy') : t('admin.users.addSubmit')}
           </button>
         </form>
       </section>
 
       <section className="rounded-2xl border border-pink-100 bg-white p-4 shadow-sm shadow-pink-900/5">
-        <h2 className="mb-3 font-medium text-stone-900">ผู้ใช้ทั้งหมด</h2>
+        <h2 className="mb-3 font-medium text-stone-900">{t('admin.users.allUsers')}</h2>
         {isLoading ? (
-          <p className="text-sm text-stone-500">กำลังโหลด...</p>
+          <p className="text-sm text-stone-500">{t('common.loading')}</p>
         ) : (
           <ul className="flex flex-col gap-2 text-sm">
             {users.map((u) => (
@@ -157,7 +159,11 @@ export function UserManagementPage() {
                   <span className="font-medium text-stone-900">{u.username}</span>
                   <span className="text-xs text-stone-500">{u.email}</span>
                   <span className="text-xs text-stone-400">
-                    สร้างเมื่อ {u.createdAt ? new Date(u.createdAt).toLocaleString('th-TH') : '-'}
+                    {t('admin.users.createdAt', {
+                      date: u.createdAt
+                        ? new Date(u.createdAt).toLocaleString(language === 'th' ? 'th-TH' : 'en-US')
+                        : '-',
+                    })}
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
@@ -168,14 +174,14 @@ export function UserManagementPage() {
                     to={`/admin/users/${u.userId}`}
                     className="rounded-lg border border-pink-300 px-2 py-1 text-xs text-pink-700 hover:bg-pink-50"
                   >
-                    แก้ไข
+                    {t('admin.users.edit')}
                   </Link>
                   <button
                     type="button"
                     onClick={() => handleDelete(u.userId!)}
                     className="rounded-lg border border-red-300 px-2 py-1 text-xs text-red-700 hover:bg-red-50"
                   >
-                    ลบ
+                    {t('admin.users.delete')}
                   </button>
                 </div>
               </li>

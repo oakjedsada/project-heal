@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { apiClient } from '../../api/client'
 import { useAuth } from '../../state/AuthContext'
+import { useLanguage } from '../../state/LanguageContext'
 import { AdminHeader } from '../components/AdminHeader'
 
 interface ChoiceForm {
@@ -50,6 +51,7 @@ const RISK_OPERATORS = ['GreaterThan', 'GreaterThanOrEqual', 'LessThan', 'LessTh
 
 export function CreateInstrumentPage() {
   const { authHeader } = useAuth()
+  const { t } = useLanguage()
 
   const [code, setCode] = useState('')
   const [name, setName] = useState('')
@@ -118,12 +120,12 @@ export function CreateInstrumentPage() {
 
       if (apiError || !response.ok) {
         const detail = (apiError as { detail?: string } | undefined)?.detail;
-        setError(detail ?? `สร้างแบบประเมินไม่สำเร็จ (${response.status})`)
+        setError(detail ?? t('admin.createInstrument.createFailed', { status: response.status }))
         return
       }
 
       setSuccessMessage(
-        `สร้างแบบประเมิน "${data!.code}" สำเร็จ (instrument id: ${data!.instrumentId}) — ไปหน้า "เส้นทางแบบประเมิน" เพื่อผูกเข้ากับ flow`,
+        t('admin.createInstrument.createSuccess', { code: data!.code!, id: data!.instrumentId! }),
       )
       setCode('')
       setName('')
@@ -132,7 +134,7 @@ export function CreateInstrumentPage() {
       setScoringRules([emptyScoringRule()])
       setRiskRules([])
     } catch {
-      setError('เกิดข้อผิดพลาดที่ไม่คาดคิด')
+      setError(t('common.unexpectedError'))
     } finally {
       setIsSubmitting(false)
     }
@@ -140,7 +142,7 @@ export function CreateInstrumentPage() {
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-8">
-      <AdminHeader title="สร้างแบบประเมินใหม่" />
+      <AdminHeader title={t('admin.createInstrument.title')} />
 
       {error && (
         <p role="alert" className="mb-4 rounded-xl bg-red-50 px-3 py-2 text-sm text-red-800">
@@ -155,18 +157,18 @@ export function CreateInstrumentPage() {
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-6">
         <section className="rounded-2xl border border-pink-100 bg-white p-4 shadow-sm shadow-pink-900/5">
-          <h2 className="mb-3 font-medium text-stone-900">ข้อมูลพื้นฐาน</h2>
+          <h2 className="mb-3 font-medium text-stone-900">{t('admin.createInstrument.basicInfo')}</h2>
           <div className="grid grid-cols-2 gap-3">
-            <Field label="รหัส (code)">
+            <Field label={t('admin.createInstrument.code')}>
               <input required value={code} onChange={(e) => setCode(e.target.value)} className={inputClass} />
             </Field>
-            <Field label="ชื่อ (name)">
+            <Field label={t('admin.createInstrument.name')}>
               <input required value={name} onChange={(e) => setName(e.target.value)} className={inputClass} />
             </Field>
-            <Field label="เวอร์ชัน">
+            <Field label={t('admin.createInstrument.version')}>
               <input required value={version} onChange={(e) => setVersion(e.target.value)} className={inputClass} />
             </Field>
-            <Field label="แหล่งที่มา (source)">
+            <Field label={t('admin.createInstrument.source')}>
               <input required value={source} onChange={(e) => setSource(e.target.value)} className={inputClass} />
             </Field>
           </div>
@@ -174,16 +176,16 @@ export function CreateInstrumentPage() {
 
         <section className="rounded-2xl border border-pink-100 bg-white p-4 shadow-sm shadow-pink-900/5">
           <div className="mb-3 flex items-center justify-between">
-            <h2 className="font-medium text-stone-900">คำถาม</h2>
+            <h2 className="font-medium text-stone-900">{t('admin.createInstrument.questions')}</h2>
             <button type="button" onClick={addQuestion} className={addButtonClass}>
-              + เพิ่มคำถาม
+              {t('admin.createInstrument.addQuestion')}
             </button>
           </div>
           <div className="flex flex-col gap-4">
             {questions.map((q, qIndex) => (
               <div key={qIndex} className="rounded-xl border border-pink-100 bg-pink-50/30 p-3">
                 <div className="mb-2 flex items-center gap-2">
-                  <Field label="ลำดับ" className="w-20">
+                  <Field label={t('admin.createInstrument.order')} className="w-20">
                     <input
                       type="number"
                       value={q.orderNo}
@@ -191,7 +193,7 @@ export function CreateInstrumentPage() {
                       className={inputClass}
                     />
                   </Field>
-                  <Field label="ข้อความคำถาม" className="flex-1">
+                  <Field label={t('admin.createInstrument.questionText')} className="flex-1">
                     <input
                       required
                       value={q.text}
@@ -205,7 +207,7 @@ export function CreateInstrumentPage() {
                       onClick={() => removeQuestion(qIndex)}
                       className={removeButtonClass}
                     >
-                      ลบคำถาม
+                      {t('admin.createInstrument.removeQuestion')}
                     </button>
                   )}
                 </div>
@@ -236,13 +238,13 @@ export function CreateInstrumentPage() {
                       />
                       {q.choices.length > 1 && (
                         <button type="button" onClick={() => removeChoice(qIndex, cIndex)} className={removeButtonClass}>
-                          ลบ
+                          {t('admin.createInstrument.remove')}
                         </button>
                       )}
                     </div>
                   ))}
                   <button type="button" onClick={() => addChoice(qIndex)} className={`${addButtonClass} self-start`}>
-                    + เพิ่มตัวเลือก
+                    {t('admin.createInstrument.addChoice')}
                   </button>
                 </div>
               </div>
@@ -252,9 +254,9 @@ export function CreateInstrumentPage() {
 
         <section className="rounded-2xl border border-pink-100 bg-white p-4 shadow-sm shadow-pink-900/5">
           <div className="mb-3 flex items-center justify-between">
-            <h2 className="font-medium text-stone-900">เกณฑ์คะแนน (scoring rules)</h2>
+            <h2 className="font-medium text-stone-900">{t('admin.createInstrument.scoringRules')}</h2>
             <button type="button" onClick={addScoringRule} className={addButtonClass}>
-              + เพิ่มช่วงคะแนน
+              {t('admin.createInstrument.addScoringRule')}
             </button>
           </div>
           <div className="flex flex-col gap-3">
@@ -298,7 +300,7 @@ export function CreateInstrumentPage() {
                   />
                   {scoringRules.length > 1 && (
                     <button type="button" onClick={() => removeScoringRule(index)} className={removeButtonClass}>
-                      ลบ
+                      {t('admin.createInstrument.remove')}
                     </button>
                   )}
                 </div>
@@ -309,9 +311,9 @@ export function CreateInstrumentPage() {
 
         <section className="rounded-2xl border border-pink-100 bg-white p-4 shadow-sm shadow-pink-900/5">
           <div className="mb-3 flex items-center justify-between">
-            <h2 className="font-medium text-stone-900">risk rules (ไม่บังคับ)</h2>
+            <h2 className="font-medium text-stone-900">{t('admin.createInstrument.riskRules')}</h2>
             <button type="button" onClick={addRiskRule} className={addButtonClass}>
-              + เพิ่ม risk rule
+              {t('admin.createInstrument.addRiskRule')}
             </button>
           </div>
           <div className="flex flex-col gap-3">
@@ -324,7 +326,7 @@ export function CreateInstrumentPage() {
                 >
                   {questions.map((q) => (
                     <option key={q.orderNo} value={q.orderNo}>
-                      คำถามข้อ {q.orderNo}
+                      {t('admin.createInstrument.questionItem', { order: q.orderNo })}
                     </option>
                   ))}
                 </select>
@@ -353,7 +355,7 @@ export function CreateInstrumentPage() {
                   className={inputClass}
                 />
                 <button type="button" onClick={() => removeRiskRule(index)} className={removeButtonClass}>
-                  ลบ
+                  {t('admin.createInstrument.remove')}
                 </button>
               </div>
             ))}
@@ -365,7 +367,7 @@ export function CreateInstrumentPage() {
           disabled={isSubmitting}
           className="min-h-11 rounded-full bg-pink-500 px-4 py-3 font-medium text-white transition-colors hover:bg-pink-600 disabled:opacity-60"
         >
-          {isSubmitting ? 'กำลังบันทึก...' : 'สร้างแบบประเมิน'}
+          {isSubmitting ? t('admin.createInstrument.submitBusy') : t('admin.createInstrument.submit')}
         </button>
       </form>
     </div>

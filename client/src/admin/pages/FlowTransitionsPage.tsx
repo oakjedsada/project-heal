@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { apiClient } from '../../api/client'
 import type { components } from '../../api/schema'
 import { useAuth } from '../../state/AuthContext'
+import { useLanguage } from '../../state/LanguageContext'
 import { AdminHeader } from '../components/AdminHeader'
 import { FlowDiagram } from '../components/FlowDiagram'
 
@@ -13,6 +14,7 @@ const CONDITION_TYPES = ['Always', 'ScoreLevelEquals', 'QuestionScoreAtLeast']
 
 export function FlowTransitionsPage() {
   const { authHeader } = useAuth()
+  const { t } = useLanguage()
 
   const [instruments, setInstruments] = useState<InstrumentSummaryDto[]>([])
   const [transitions, setTransitions] = useState<FlowTransitionDto[]>([])
@@ -35,13 +37,13 @@ export function FlowTransitionsPage() {
       apiClient.GET('/api/admin/flow-transitions', { headers: authHeader }),
     ])
     if (instrumentsRes.error || transitionsRes.error) {
-      setError('โหลดข้อมูลไม่สำเร็จ')
+      setError(t('admin.flow.loadFailed'))
     } else {
       setInstruments(instrumentsRes.data ?? [])
       setTransitions(transitionsRes.data ?? [])
     }
     setIsLoading(false)
-  }, [authHeader])
+  }, [authHeader, t])
 
   useEffect(() => {
     void loadAll()
@@ -65,7 +67,7 @@ export function FlowTransitionsPage() {
     setFormError(null)
 
     if (!toInstrumentId) {
-      setFormError('กรุณาเลือกแบบประเมินปลายทาง')
+      setFormError(t('admin.flow.selectDestination'))
       return
     }
 
@@ -81,7 +83,7 @@ export function FlowTransitionsPage() {
     })
 
     if (apiError || !response.ok) {
-      setFormError(`สร้างเส้นทางไม่สำเร็จ (${response.status})`)
+      setFormError(t('admin.flow.createFailed', { status: response.status }))
       return
     }
 
@@ -101,7 +103,7 @@ export function FlowTransitionsPage() {
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-8">
-      <AdminHeader title="เส้นทางแบบประเมิน (flow transitions)" />
+      <AdminHeader title={t('admin.flow.title')} />
 
       {error && <p className="mb-4 rounded-xl bg-red-50 px-3 py-2 text-sm text-red-800">{error}</p>}
 
@@ -112,16 +114,16 @@ export function FlowTransitionsPage() {
       )}
 
       <section className="mb-6 rounded-2xl border border-pink-100 bg-white p-4 shadow-sm shadow-pink-900/5">
-        <h2 className="mb-3 font-medium text-stone-900">เพิ่มเส้นทางใหม่</h2>
+        <h2 className="mb-3 font-medium text-stone-900">{t('admin.flow.addNew')}</h2>
         <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-3">
           <label className="flex flex-col gap-1 text-sm text-stone-700">
-            จาก (จบแบบประเมินไหน)
+            {t('admin.flow.from')}
             <select
               value={fromInstrumentId}
               onChange={(e) => setFromInstrumentId(e.target.value)}
               className={selectClass}
             >
-              <option value="">เริ่มต้น session (ไม่มี from)</option>
+              <option value="">{t('admin.flow.sessionStart')}</option>
               {instruments.map((i) => (
                 <option key={i.instrumentId} value={i.instrumentId}>
                   {i.code} — {i.name}
@@ -131,7 +133,7 @@ export function FlowTransitionsPage() {
           </label>
 
           <label className="flex flex-col gap-1 text-sm text-stone-700">
-            เงื่อนไข
+            {t('admin.flow.condition')}
             <select value={conditionType} onChange={(e) => setConditionType(e.target.value)} className={selectClass}>
               {CONDITION_TYPES.map((c) => (
                 <option key={c} value={c}>
@@ -143,7 +145,7 @@ export function FlowTransitionsPage() {
 
           {conditionType === 'ScoreLevelEquals' && (
             <label className="col-span-2 flex flex-col gap-1 text-sm text-stone-700">
-              ระดับ (level) ที่ต้องตรงกัน
+              {t('admin.flow.levelMatch')}
               <input
                 required
                 value={conditionValue}
@@ -157,18 +159,18 @@ export function FlowTransitionsPage() {
           {conditionType === 'QuestionScoreAtLeast' && (
             <>
               <label className="flex flex-col gap-1 text-sm text-stone-700">
-                คำถาม (ของแบบประเมินต้นทาง)
+                {t('admin.flow.question')}
                 <select value={questionId} onChange={(e) => setQuestionId(e.target.value)} className={selectClass}>
-                  <option value="">เลือกคำถาม</option>
+                  <option value="">{t('admin.flow.selectQuestion')}</option>
                   {fromInstrumentDetail?.questions?.map((q) => (
                     <option key={q.questionId} value={q.questionId}>
-                      ข้อ {q.orderNo}: {q.text}
+                      {t('admin.flow.questionItem', { order: q.orderNo!, text: q.text! })}
                     </option>
                   ))}
                 </select>
               </label>
               <label className="flex flex-col gap-1 text-sm text-stone-700">
-                threshold (คะแนนขั้นต่ำ)
+                {t('admin.flow.threshold')}
                 <input
                   required
                   type="number"
@@ -181,9 +183,9 @@ export function FlowTransitionsPage() {
           )}
 
           <label className="col-span-2 flex flex-col gap-1 text-sm text-stone-700">
-            ไป (แบบประเมินปลายทาง)
+            {t('admin.flow.to')}
             <select value={toInstrumentId} onChange={(e) => setToInstrumentId(e.target.value)} className={selectClass}>
-              <option value="">เลือกแบบประเมิน</option>
+              <option value="">{t('admin.flow.selectInstrument')}</option>
               {instruments.map((i) => (
                 <option key={i.instrumentId} value={i.instrumentId}>
                   {i.code} — {i.name}
@@ -198,27 +200,26 @@ export function FlowTransitionsPage() {
             type="submit"
             className="col-span-2 min-h-11 rounded-full bg-pink-500 px-4 py-2 font-medium text-white transition-colors hover:bg-pink-600"
           >
-            เพิ่มเส้นทาง
+            {t('admin.flow.submit')}
           </button>
         </form>
       </section>
 
       <section className="rounded-2xl border border-pink-100 bg-white p-4 shadow-sm shadow-pink-900/5">
-        <h2 className="mb-3 font-medium text-stone-900">เส้นทางทั้งหมด</h2>
+        <h2 className="mb-3 font-medium text-stone-900">{t('admin.flow.allTransitions')}</h2>
         <ul className="flex flex-col gap-2 text-sm">
-          {transitions.map((t) => (
-            <li key={t.id} className="flex items-center justify-between rounded-xl border border-stone-100 px-3 py-2">
+          {transitions.map((tr) => (
+            <li key={tr.id} className="flex items-center justify-between rounded-xl border border-stone-100 px-3 py-2">
               <span className="text-stone-700">
-                {t.fromInstrumentCode ?? 'เริ่มต้น session'} → {t.fromInstrumentCode ? '' : ''}
-                {t.toInstrumentCode} ({t.conditionType}
-                {t.conditionValue ? `: ${t.conditionValue}` : ''})
+                {tr.fromInstrumentCode ?? t('admin.flow.sessionStartLabel')} → {tr.toInstrumentCode} ({tr.conditionType}
+                {tr.conditionValue ? `: ${tr.conditionValue}` : ''})
               </span>
               <button
                 type="button"
-                onClick={() => handleDelete(t.id!)}
+                onClick={() => handleDelete(tr.id!)}
                 className="rounded-lg border border-red-300 px-2 py-1 text-xs text-red-700 hover:bg-red-50"
               >
-                ลบ
+                {t('admin.flow.remove')}
               </button>
             </li>
           ))}
