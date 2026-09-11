@@ -97,9 +97,9 @@ export function DashboardPage() {
             {hasTrend ? (
               <div className="h-72 w-full">
                 <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={stats!.dailyTrend!}>
+                  <LineChart data={stats!.dailyTrend!} margin={{ top: 5, right: 36, bottom: 5, left: 0 }}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#e7e5e4" />
-                    <XAxis dataKey="date" stroke="#78716c" />
+                    <XAxis dataKey="date" stroke="#78716c" interval={0} tick={{ fontSize: 11 }} />
                     <YAxis allowDecimals={false} stroke="#78716c" />
                     <Tooltip />
                     <Line type="monotone" dataKey="sessionCount" stroke="#db2777" strokeWidth={2.5} dot={{ fill: '#db2777' }} />
