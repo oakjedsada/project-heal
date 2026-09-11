@@ -193,7 +193,7 @@ export function CreateInstrumentPage() {
                       className={inputClass}
                     />
                   </Field>
-                  <Field label={t('admin.createInstrument.questionText')} className="flex-1">
+                  <Field label={t('admin.createInstrument.questionText')} className="min-w-0 flex-1">
                     <input
                       required
                       value={q.text}
@@ -220,7 +220,7 @@ export function CreateInstrumentPage() {
                         placeholder="label"
                         value={c.label}
                         onChange={(e) => updateChoice(qIndex, cIndex, { label: e.target.value })}
-                        className={`${inputClass} flex-1`}
+                        className={`${inputClass} min-w-0 flex-1`}
                       />
                       <input
                         type="number"
@@ -290,16 +290,20 @@ export function CreateInstrumentPage() {
                   onChange={(e) => updateScoringRule(index, { interpretation: e.target.value })}
                   className={`${inputClass} col-span-2`}
                 />
-                <div className="flex items-center gap-1">
+                <div className="flex min-w-0 items-center gap-1">
                   <input
                     required
                     placeholder="advice"
                     value={r.advice}
                     onChange={(e) => updateScoringRule(index, { advice: e.target.value })}
-                    className={inputClass}
+                    className={`${inputClass} min-w-0 flex-1`}
                   />
                   {scoringRules.length > 1 && (
-                    <button type="button" onClick={() => removeScoringRule(index)} className={removeButtonClass}>
+                    <button
+                      type="button"
+                      onClick={() => removeScoringRule(index)}
+                      className={`${removeButtonClass} shrink-0`}
+                    >
                       {t('admin.createInstrument.remove')}
                     </button>
                   )}
