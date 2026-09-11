@@ -4,6 +4,7 @@ import { CreateInstrumentPage } from './admin/pages/CreateInstrumentPage'
 import { DashboardPage } from './admin/pages/DashboardPage'
 import { EditUserPage } from './admin/pages/EditUserPage'
 import { FlowTransitionsPage } from './admin/pages/FlowTransitionsPage'
+import { InstrumentManagementPage } from './admin/pages/InstrumentManagementPage'
 import { UserManagementPage } from './admin/pages/UserManagementPage'
 import { Layout } from './components/Layout'
 import { AssessmentPage } from './pages/AssessmentPage'
@@ -78,6 +79,14 @@ function AdminApp() {
         element={
           <AdminRouteGuard>
             <CreateInstrumentPage />
+          </AdminRouteGuard>
+        }
+      />
+      <Route
+        path="instruments"
+        element={
+          <AdminRouteGuard>
+            <InstrumentManagementPage />
           </AdminRouteGuard>
         }
       />

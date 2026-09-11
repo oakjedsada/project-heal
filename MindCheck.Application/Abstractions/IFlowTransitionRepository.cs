@@ -15,4 +15,11 @@ public interface IFlowTransitionRepository
     Task<FlowTransition> AddAsync(FlowTransition transition, CancellationToken cancellationToken);
 
     Task<bool> DeleteAsync(int id, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Atomically replaces every existing session-start transition (from = null)
+    /// with a single new one pointing at <paramref name="toInstrumentId"/>, so
+    /// exactly one instrument is ever the active starting point — see ADR 0016.
+    /// </summary>
+    Task<FlowTransition> SetStartTransitionAsync(InstrumentId toInstrumentId, CancellationToken cancellationToken);
 }

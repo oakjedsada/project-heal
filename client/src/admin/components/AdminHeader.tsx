@@ -4,9 +4,14 @@ import { useAuth } from '../../state/AuthContext'
 import { useLanguage } from '../../state/LanguageContext'
 import type { TranslationKey } from '../../i18n/translations'
 
-const NAV_ITEMS: { to: string; labelKey: TranslationKey }[] = [
+// `end` defaults to false (NavLink highlights on any matching prefix, so a
+// sub-page like /admin/users/:id still lights up "จัดการผู้ใช้"); only
+// /admin/instruments needs it set since /admin/instruments/new would
+// otherwise also match its prefix and highlight both pills at once.
+const NAV_ITEMS: { to: string; labelKey: TranslationKey; end?: boolean }[] = [
   { to: '/admin/dashboard', labelKey: 'admin.nav.dashboard' },
   { to: '/admin/instruments/new', labelKey: 'admin.nav.createInstrument' },
+  { to: '/admin/instruments', labelKey: 'admin.nav.instruments', end: true },
   { to: '/admin/flow-transitions', labelKey: 'admin.nav.flowTransitions' },
   { to: '/admin/users', labelKey: 'admin.nav.users' },
 ]
@@ -57,6 +62,7 @@ export function AdminHeader({ title }: { title: string }) {
           <NavLink
             key={item.to}
             to={item.to}
+            end={item.end}
             className={({ isActive }) =>
               `rounded-full px-3 py-1.5 font-medium transition-colors ${
                 isActive ? 'bg-pink-500 text-white shadow-sm' : 'text-pink-700 hover:bg-pink-100'

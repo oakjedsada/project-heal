@@ -87,6 +87,7 @@ builder.Services.AddScoped<LogoutAllSessionsUseCase>();
 builder.Services.AddScoped<CreateInstrumentUseCase>();
 builder.Services.AddScoped<ListInstrumentsUseCase>();
 builder.Services.AddScoped<GetInstrumentDetailUseCase>();
+builder.Services.AddScoped<SetActiveInstrumentUseCase>();
 builder.Services.AddScoped<CreateFlowTransitionUseCase>();
 builder.Services.AddScoped<ListFlowTransitionsUseCase>();
 builder.Services.AddScoped<DeleteFlowTransitionUseCase>();

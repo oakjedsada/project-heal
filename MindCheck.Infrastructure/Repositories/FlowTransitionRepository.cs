@@ -39,4 +39,21 @@ public sealed class FlowTransitionRepository : IFlowTransitionRepository
             .ExecuteDeleteAsync(cancellationToken);
         return rowsAffected > 0;
     }
+
+    public async Task<FlowTransition> SetStartTransitionAsync(InstrumentId toInstrumentId, CancellationToken cancellationToken)
+    {
+        await using var transaction = await _db.Database.BeginTransactionAsync(cancellationToken);
+
+        await _db.FlowTransitions
+            .Where(t => t.FromInstrumentId == null)
+            .ExecuteDeleteAsync(cancellationToken);
+
+        var transition = new FlowTransition(0, null, FlowConditionType.Always, null, null, toInstrumentId);
+        _db.FlowTransitions.Add(transition);
+        await _db.SaveChangesAsync(cancellationToken);
+
+        await transaction.CommitAsync(cancellationToken);
+
+        return transition;
+    }
 }

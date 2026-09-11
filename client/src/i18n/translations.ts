@@ -97,6 +97,7 @@ const th = {
 
   'admin.nav.dashboard': 'สถิติรวม',
   'admin.nav.createInstrument': 'สร้างแบบประเมิน',
+  'admin.nav.instruments': 'จัดการแบบสอบถาม',
   'admin.nav.flowTransitions': 'เส้นทางแบบประเมิน',
   'admin.nav.users': 'จัดการผู้ใช้',
 
@@ -130,6 +131,15 @@ const th = {
   'admin.createInstrument.questionItem': 'คำถามข้อ {{order}}',
   'admin.createInstrument.submit': 'สร้างแบบประเมิน',
   'admin.createInstrument.submitBusy': 'กำลังบันทึก...',
+
+  'admin.instruments.title': 'จัดการแบบสอบถาม',
+  'admin.instruments.loadFailed': 'โหลดรายชื่อแบบสอบถามไม่สำเร็จ',
+  'admin.instruments.description': 'เลือกแบบสอบถามที่จะให้ผู้ใช้ทำเป็นข้อแรกเมื่อเริ่มต้นทำแบบประเมิน',
+  'admin.instruments.active': 'ใช้งานอยู่',
+  'admin.instruments.setActive': 'ตั้งเป็นแบบสอบถามที่ใช้งาน',
+  'admin.instruments.setActiveBusy': 'กำลังตั้งค่า...',
+  'admin.instruments.setActiveFailed': 'ตั้งค่าไม่สำเร็จ ({{status}})',
+  'admin.instruments.noInstruments': 'ยังไม่มีแบบสอบถามที่สร้างไว้ — ไปสร้างที่หน้า "สร้างแบบประเมิน" ก่อน',
 
   'admin.flow.title': 'เส้นทางแบบประเมิน (flow transitions)',
   'admin.flow.loadFailed': 'โหลดข้อมูลไม่สำเร็จ',
@@ -283,6 +293,7 @@ const en: Record<keyof typeof th, string> = {
 
   'admin.nav.dashboard': 'Overview',
   'admin.nav.createInstrument': 'Create assessment',
+  'admin.nav.instruments': 'Manage questionnaires',
   'admin.nav.flowTransitions': 'Assessment flow',
   'admin.nav.users': 'Manage users',
 
@@ -316,6 +327,15 @@ const en: Record<keyof typeof th, string> = {
   'admin.createInstrument.questionItem': 'Question {{order}}',
   'admin.createInstrument.submit': 'Create assessment',
   'admin.createInstrument.submitBusy': 'Saving...',
+
+  'admin.instruments.title': 'Manage questionnaires',
+  'admin.instruments.loadFailed': 'Failed to load the questionnaire list',
+  'admin.instruments.description': 'Choose which questionnaire users take first when they start an assessment',
+  'admin.instruments.active': 'Active',
+  'admin.instruments.setActive': 'Set as active questionnaire',
+  'admin.instruments.setActiveBusy': 'Setting...',
+  'admin.instruments.setActiveFailed': 'Failed to set as active ({{status}})',
+  'admin.instruments.noInstruments': 'No questionnaires created yet — create one on the "Create assessment" page first',
 
   'admin.flow.title': 'Assessment flow (transitions)',
   'admin.flow.loadFailed': 'Failed to load data',

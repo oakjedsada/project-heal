@@ -14,15 +14,18 @@ public sealed class AdminInstrumentsController : ControllerBase
     private readonly CreateInstrumentUseCase _createInstrumentUseCase;
     private readonly ListInstrumentsUseCase _listInstrumentsUseCase;
     private readonly GetInstrumentDetailUseCase _getInstrumentDetailUseCase;
+    private readonly SetActiveInstrumentUseCase _setActiveInstrumentUseCase;
 
     public AdminInstrumentsController(
         CreateInstrumentUseCase createInstrumentUseCase,
         ListInstrumentsUseCase listInstrumentsUseCase,
-        GetInstrumentDetailUseCase getInstrumentDetailUseCase)
+        GetInstrumentDetailUseCase getInstrumentDetailUseCase,
+        SetActiveInstrumentUseCase setActiveInstrumentUseCase)
     {
         _createInstrumentUseCase = createInstrumentUseCase;
         _listInstrumentsUseCase = listInstrumentsUseCase;
         _getInstrumentDetailUseCase = getInstrumentDetailUseCase;
+        _setActiveInstrumentUseCase = setActiveInstrumentUseCase;
     }
 
     [HttpPost]
@@ -44,5 +47,14 @@ public sealed class AdminInstrumentsController : ControllerBase
     public async Task<ActionResult<InstrumentDetailDto>> GetDetail(int id, CancellationToken cancellationToken)
     {
         return Ok(await _getInstrumentDetailUseCase.ExecuteAsync(new InstrumentId(id), cancellationToken));
+    }
+
+    [HttpPatch("{id:int}/activate")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> Activate(int id, CancellationToken cancellationToken)
+    {
+        await _setActiveInstrumentUseCase.ExecuteAsync(new InstrumentId(id), cancellationToken);
+        return NoContent();
     }
 }
