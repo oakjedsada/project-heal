@@ -881,9 +881,15 @@ export interface components {
             orderNo?: number;
             choices?: components["schemas"]["CreatedChoiceDto"][] | null;
         };
+        DailyTrendPointDto: {
+            /** Format: date */
+            date?: string;
+            /** Format: int32 */
+            sessionCount?: number;
+        };
         DashboardStatsDto: {
             levelBreakdown?: components["schemas"]["LevelBreakdownDto"][] | null;
-            weeklyTrend?: components["schemas"]["WeeklyTrendPointDto"][] | null;
+            dailyTrend?: components["schemas"]["DailyTrendPointDto"][] | null;
         };
         FlowTransitionDto: {
             /** Format: int32 */
@@ -1006,12 +1012,6 @@ export interface components {
             role?: string | null;
             /** Format: date-time */
             createdAt?: string;
-        };
-        WeeklyTrendPointDto: {
-            /** Format: date */
-            weekStart?: string;
-            /** Format: int32 */
-            sessionCount?: number;
         };
     };
     responses: never;

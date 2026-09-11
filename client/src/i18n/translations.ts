@@ -104,7 +104,7 @@ const th = {
   'admin.dashboard.loadFailed': 'โหลดสถิติไม่สำเร็จ',
   'admin.dashboard.byLevel': 'จำนวน session แยกตามระดับผล',
   'admin.dashboard.noBreakdownData': 'ยังไม่มีข้อมูล session ที่ทำแบบประเมินจนจบ',
-  'admin.dashboard.weeklyTrend': 'แนวโน้มจำนวน session รายสัปดาห์',
+  'admin.dashboard.dailyTrend': 'แนวโน้มจำนวน session 7 วันที่ผ่านมา',
   'admin.dashboard.noTrendData': 'ยังไม่มี session เริ่มต้นเลย',
 
   'admin.createInstrument.title': 'สร้างแบบประเมินใหม่',
@@ -290,7 +290,7 @@ const en: Record<keyof typeof th, string> = {
   'admin.dashboard.loadFailed': 'Failed to load stats',
   'admin.dashboard.byLevel': 'Sessions by result level',
   'admin.dashboard.noBreakdownData': 'No completed sessions yet',
-  'admin.dashboard.weeklyTrend': 'Weekly session trend',
+  'admin.dashboard.dailyTrend': 'Session trend (last 7 days)',
   'admin.dashboard.noTrendData': 'No sessions started yet',
 
   'admin.createInstrument.title': 'Create a new assessment',

@@ -58,7 +58,7 @@ export function DashboardPage() {
   }, [authHeader, t])
 
   const hasBreakdown = (stats?.levelBreakdown?.length ?? 0) > 0
-  const hasTrend = (stats?.weeklyTrend?.length ?? 0) > 0
+  const hasTrend = (stats?.dailyTrend?.length ?? 0) > 0
   const { rows, levels } = stats ? pivotLevelBreakdown(stats) : { rows: [], levels: [] }
 
   return (
@@ -93,13 +93,13 @@ export function DashboardPage() {
           </section>
 
           <section className="rounded-2xl border border-pink-100 bg-white p-4 shadow-sm shadow-pink-900/5">
-            <h2 className="mb-3 font-medium text-stone-900">{t('admin.dashboard.weeklyTrend')}</h2>
+            <h2 className="mb-3 font-medium text-stone-900">{t('admin.dashboard.dailyTrend')}</h2>
             {hasTrend ? (
               <div className="h-72 w-full">
                 <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={stats!.weeklyTrend!}>
+                  <LineChart data={stats!.dailyTrend!}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#e7e5e4" />
-                    <XAxis dataKey="weekStart" stroke="#78716c" />
+                    <XAxis dataKey="date" stroke="#78716c" />
                     <YAxis allowDecimals={false} stroke="#78716c" />
                     <Tooltip />
                     <Line type="monotone" dataKey="sessionCount" stroke="#db2777" strokeWidth={2.5} dot={{ fill: '#db2777' }} />
