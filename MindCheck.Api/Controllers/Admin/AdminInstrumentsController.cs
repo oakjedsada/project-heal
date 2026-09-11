@@ -14,17 +14,23 @@ public sealed class AdminInstrumentsController : ControllerBase
     private readonly CreateInstrumentUseCase _createInstrumentUseCase;
     private readonly ListInstrumentsUseCase _listInstrumentsUseCase;
     private readonly GetInstrumentDetailUseCase _getInstrumentDetailUseCase;
+    private readonly GetInstrumentFullDetailUseCase _getInstrumentFullDetailUseCase;
+    private readonly UpdateInstrumentUseCase _updateInstrumentUseCase;
     private readonly SetActiveInstrumentUseCase _setActiveInstrumentUseCase;
 
     public AdminInstrumentsController(
         CreateInstrumentUseCase createInstrumentUseCase,
         ListInstrumentsUseCase listInstrumentsUseCase,
         GetInstrumentDetailUseCase getInstrumentDetailUseCase,
+        GetInstrumentFullDetailUseCase getInstrumentFullDetailUseCase,
+        UpdateInstrumentUseCase updateInstrumentUseCase,
         SetActiveInstrumentUseCase setActiveInstrumentUseCase)
     {
         _createInstrumentUseCase = createInstrumentUseCase;
         _listInstrumentsUseCase = listInstrumentsUseCase;
         _getInstrumentDetailUseCase = getInstrumentDetailUseCase;
+        _getInstrumentFullDetailUseCase = getInstrumentFullDetailUseCase;
+        _updateInstrumentUseCase = updateInstrumentUseCase;
         _setActiveInstrumentUseCase = setActiveInstrumentUseCase;
     }
 
@@ -47,6 +53,21 @@ public sealed class AdminInstrumentsController : ControllerBase
     public async Task<ActionResult<InstrumentDetailDto>> GetDetail(int id, CancellationToken cancellationToken)
     {
         return Ok(await _getInstrumentDetailUseCase.ExecuteAsync(new InstrumentId(id), cancellationToken));
+    }
+
+    [HttpGet("{id:int}/full")]
+    public async Task<ActionResult<InstrumentFullDetailDto>> GetFullDetail(int id, CancellationToken cancellationToken)
+    {
+        return Ok(await _getInstrumentFullDetailUseCase.ExecuteAsync(new InstrumentId(id), cancellationToken));
+    }
+
+    [HttpPut("{id:int}")]
+    public async Task<ActionResult<InstrumentFullDetailDto>> Update(
+        int id,
+        [FromBody] UpdateInstrumentRequest request,
+        CancellationToken cancellationToken)
+    {
+        return Ok(await _updateInstrumentUseCase.ExecuteAsync(new InstrumentId(id), request, cancellationToken));
     }
 
     [HttpPatch("{id:int}/activate")]

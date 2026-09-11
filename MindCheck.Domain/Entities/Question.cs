@@ -8,8 +8,8 @@ public sealed class Question
 
     public QuestionId Id { get; }
     public InstrumentId InstrumentId { get; }
-    public int OrderNo { get; }
-    public string Text { get; }
+    public int OrderNo { get; private set; }
+    public string Text { get; private set; }
     public QuestionType QuestionType { get; }
 
     // Backing field name follows EF Core's convention so it can bind the
@@ -39,5 +39,21 @@ public sealed class Question
         Text = text;
         QuestionType = questionType;
         _choices = new List<Choice>();
+    }
+
+    public void ChangeDetails(string text, int orderNo)
+    {
+        Text = text;
+        OrderNo = orderNo;
+    }
+
+    public void AddChoice(Choice choice)
+    {
+        _choices.Add(choice);
+    }
+
+    public void RemoveChoice(ChoiceId id)
+    {
+        _choices.RemoveAll(c => c.Id == id);
     }
 }

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { apiClient } from '../../api/client'
 import type { components } from '../../api/schema'
 import { useAuth } from '../../state/AuthContext'
@@ -75,22 +76,30 @@ export function InstrumentManagementPage() {
                   <span className="font-medium text-stone-900">{instrument.name}</span>
                   <span className="text-xs text-stone-500">{instrument.code}</span>
                 </div>
-                {instrument.isActiveStart ? (
-                  <span className="rounded-full bg-pink-500 px-3 py-1.5 text-xs font-medium text-white">
-                    {t('admin.instruments.active')}
-                  </span>
-                ) : (
-                  <button
-                    type="button"
-                    onClick={() => handleSetActive(instrument.instrumentId!)}
-                    disabled={activatingId === instrument.instrumentId}
-                    className="rounded-lg border border-pink-300 px-3 py-1.5 text-xs font-medium text-pink-700 transition-colors hover:bg-pink-50 disabled:opacity-60"
+                <div className="flex items-center gap-2">
+                  <Link
+                    to={`/admin/instruments/${instrument.instrumentId}/edit`}
+                    className="rounded-lg border border-stone-300 px-3 py-1.5 text-xs font-medium text-stone-700 transition-colors hover:bg-stone-50"
                   >
-                    {activatingId === instrument.instrumentId
-                      ? t('admin.instruments.setActiveBusy')
-                      : t('admin.instruments.setActive')}
-                  </button>
-                )}
+                    {t('admin.instruments.edit')}
+                  </Link>
+                  {instrument.isActiveStart ? (
+                    <span className="rounded-full bg-pink-500 px-3 py-1.5 text-xs font-medium text-white">
+                      {t('admin.instruments.active')}
+                    </span>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => handleSetActive(instrument.instrumentId!)}
+                      disabled={activatingId === instrument.instrumentId}
+                      className="rounded-lg border border-pink-300 px-3 py-1.5 text-xs font-medium text-pink-700 transition-colors hover:bg-pink-50 disabled:opacity-60"
+                    >
+                      {activatingId === instrument.instrumentId
+                        ? t('admin.instruments.setActiveBusy')
+                        : t('admin.instruments.setActive')}
+                    </button>
+                  )}
+                </div>
               </li>
             ))}
           </ul>

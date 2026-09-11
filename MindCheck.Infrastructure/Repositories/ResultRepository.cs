@@ -29,4 +29,13 @@ public sealed class ResultRepository : IResultRepository
             .GroupBy(r => new { r.InstrumentId, r.Level })
             .Select(g => new InstrumentLevelCount(g.Key.InstrumentId, g.Key.Level, g.Count()))
             .ToListAsync(cancellationToken);
+
+    public async Task<IReadOnlySet<string>> GetLevelsInUseAsync(InstrumentId instrumentId, CancellationToken cancellationToken) =>
+        (await _db.Results
+            .AsNoTracking()
+            .Where(r => r.InstrumentId == instrumentId)
+            .Select(r => r.Level)
+            .Distinct()
+            .ToListAsync(cancellationToken))
+        .ToHashSet();
 }

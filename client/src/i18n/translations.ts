@@ -140,6 +140,15 @@ const th = {
   'admin.instruments.setActiveBusy': 'กำลังตั้งค่า...',
   'admin.instruments.setActiveFailed': 'ตั้งค่าไม่สำเร็จ ({{status}})',
   'admin.instruments.noInstruments': 'ยังไม่มีแบบสอบถามที่สร้างไว้ — ไปสร้างที่หน้า "สร้างแบบประเมิน" ก่อน',
+  'admin.instruments.edit': 'แก้ไข',
+
+  'admin.editInstrument.title': 'แก้ไขแบบประเมิน',
+  'admin.editInstrument.loadFailed': 'โหลดข้อมูลแบบประเมินไม่สำเร็จ',
+  'admin.editInstrument.saveFailed': 'บันทึกไม่สำเร็จ ({{status}})',
+  'admin.editInstrument.saveSuccess': 'บันทึกการแก้ไขสำเร็จ',
+  'admin.editInstrument.save': 'บันทึกการเปลี่ยนแปลง',
+  'admin.editInstrument.saveBusy': 'กำลังบันทึก...',
+  'admin.editInstrument.cancel': 'ยกเลิก',
 
   'admin.flow.title': 'เส้นทางแบบประเมิน (flow transitions)',
   'admin.flow.loadFailed': 'โหลดข้อมูลไม่สำเร็จ',
@@ -336,6 +345,15 @@ const en: Record<keyof typeof th, string> = {
   'admin.instruments.setActiveBusy': 'Setting...',
   'admin.instruments.setActiveFailed': 'Failed to set as active ({{status}})',
   'admin.instruments.noInstruments': 'No questionnaires created yet — create one on the "Create assessment" page first',
+  'admin.instruments.edit': 'Edit',
+
+  'admin.editInstrument.title': 'Edit assessment',
+  'admin.editInstrument.loadFailed': 'Failed to load the assessment',
+  'admin.editInstrument.saveFailed': 'Failed to save ({{status}})',
+  'admin.editInstrument.saveSuccess': 'Changes saved',
+  'admin.editInstrument.save': 'Save changes',
+  'admin.editInstrument.saveBusy': 'Saving...',
+  'admin.editInstrument.cancel': 'Cancel',
 
   'admin.flow.title': 'Assessment flow (transitions)',
   'admin.flow.loadFailed': 'Failed to load data',

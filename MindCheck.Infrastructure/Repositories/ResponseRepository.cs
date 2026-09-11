@@ -22,4 +22,24 @@ public sealed class ResponseRepository : IResponseRepository
         _db.Responses.Add(response);
         await _db.SaveChangesAsync(cancellationToken);
     }
+
+    public async Task<IReadOnlySet<QuestionId>> GetAnsweredQuestionIdsAsync(
+        IReadOnlyList<QuestionId> questionIds, CancellationToken cancellationToken) =>
+        (await _db.Responses
+            .AsNoTracking()
+            .Where(r => questionIds.Contains(r.QuestionId))
+            .Select(r => r.QuestionId)
+            .Distinct()
+            .ToListAsync(cancellationToken))
+        .ToHashSet();
+
+    public async Task<IReadOnlySet<ChoiceId>> GetAnsweredChoiceIdsAsync(
+        IReadOnlyList<ChoiceId> choiceIds, CancellationToken cancellationToken) =>
+        (await _db.Responses
+            .AsNoTracking()
+            .Where(r => choiceIds.Contains(r.ChoiceId))
+            .Select(r => r.ChoiceId)
+            .Distinct()
+            .ToListAsync(cancellationToken))
+        .ToHashSet();
 }

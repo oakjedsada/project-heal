@@ -2,6 +2,7 @@ import { Navigate, Route, Routes } from 'react-router-dom'
 import { AdminRouteGuard } from './admin/AdminRouteGuard'
 import { CreateInstrumentPage } from './admin/pages/CreateInstrumentPage'
 import { DashboardPage } from './admin/pages/DashboardPage'
+import { EditInstrumentPage } from './admin/pages/EditInstrumentPage'
 import { EditUserPage } from './admin/pages/EditUserPage'
 import { FlowTransitionsPage } from './admin/pages/FlowTransitionsPage'
 import { InstrumentManagementPage } from './admin/pages/InstrumentManagementPage'
@@ -87,6 +88,14 @@ function AdminApp() {
         element={
           <AdminRouteGuard>
             <InstrumentManagementPage />
+          </AdminRouteGuard>
+        }
+      />
+      <Route
+        path="instruments/:id/edit"
+        element={
+          <AdminRouteGuard>
+            <EditInstrumentPage />
           </AdminRouteGuard>
         }
       />

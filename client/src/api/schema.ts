@@ -235,6 +235,74 @@ export interface paths {
                 };
             };
         };
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: number;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": components["schemas"]["UpdateInstrumentRequest"];
+                    "text/json": components["schemas"]["UpdateInstrumentRequest"];
+                    "application/*+json": components["schemas"]["UpdateInstrumentRequest"];
+                };
+            };
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["InstrumentFullDetailDto"];
+                        "application/json": components["schemas"]["InstrumentFullDetailDto"];
+                        "text/json": components["schemas"]["InstrumentFullDetailDto"];
+                    };
+                };
+            };
+        };
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/instruments/{id}/full": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    id: number;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description OK */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "text/plain": components["schemas"]["InstrumentFullDetailDto"];
+                        "application/json": components["schemas"]["InstrumentFullDetailDto"];
+                        "text/json": components["schemas"]["InstrumentFullDetailDto"];
+                    };
+                };
+            };
+        };
         put?: never;
         post?: never;
         delete?: never;
@@ -957,6 +1025,34 @@ export interface components {
         ForgotPasswordResponse: {
             devResetLink?: string | null;
         };
+        FullChoiceDto: {
+            /** Format: int32 */
+            choiceId?: number;
+            label?: string | null;
+            /** Format: int32 */
+            score?: number;
+            /** Format: int32 */
+            orderNo?: number;
+        };
+        FullQuestionDto: {
+            /** Format: int32 */
+            questionId?: number;
+            text?: string | null;
+            /** Format: int32 */
+            orderNo?: number;
+            choices?: components["schemas"]["FullChoiceDto"][] | null;
+        };
+        FullScoringRuleDto: {
+            /** Format: int32 */
+            scoringRuleId?: number;
+            /** Format: int32 */
+            min?: number;
+            /** Format: int32 */
+            max?: number;
+            level?: string | null;
+            interpretation?: string | null;
+            advice?: string | null;
+        };
         HelpResourceDto: {
             label?: string | null;
             contact?: string | null;
@@ -974,6 +1070,17 @@ export interface components {
             text?: string | null;
             /** Format: int32 */
             orderNo?: number;
+        };
+        InstrumentFullDetailDto: {
+            /** Format: int32 */
+            instrumentId?: number;
+            code?: string | null;
+            name?: string | null;
+            version?: string | null;
+            source?: string | null;
+            isActive?: boolean;
+            questions?: components["schemas"]["FullQuestionDto"][] | null;
+            scoringRules?: components["schemas"]["FullScoringRuleDto"][] | null;
         };
         InstrumentResultDto: {
             instrumentCode?: string | null;
@@ -1044,6 +1151,43 @@ export interface components {
             questionId?: number;
             /** Format: int32 */
             choiceId?: number;
+        };
+        UpdateChoiceRequest: {
+            /** Format: int32 */
+            choiceId?: number | null;
+            label?: string | null;
+            /** Format: int32 */
+            score?: number;
+            /** Format: int32 */
+            orderNo?: number;
+        };
+        UpdateInstrumentRequest: {
+            code?: string | null;
+            name?: string | null;
+            version?: string | null;
+            source?: string | null;
+            isActive?: boolean;
+            questions?: components["schemas"]["UpdateQuestionRequest"][] | null;
+            scoringRules?: components["schemas"]["UpdateScoringRuleRequest"][] | null;
+        };
+        UpdateQuestionRequest: {
+            /** Format: int32 */
+            questionId?: number | null;
+            text?: string | null;
+            /** Format: int32 */
+            orderNo?: number;
+            choices?: components["schemas"]["UpdateChoiceRequest"][] | null;
+        };
+        UpdateScoringRuleRequest: {
+            /** Format: int32 */
+            scoringRuleId?: number | null;
+            /** Format: int32 */
+            min?: number;
+            /** Format: int32 */
+            max?: number;
+            level?: string | null;
+            interpretation?: string | null;
+            advice?: string | null;
         };
         UpdateUserRequest: {
             username?: string | null;

@@ -28,4 +28,27 @@ public interface IInstrumentRepository
         IReadOnlyList<ScoringRuleSpec> scoringRuleSpecs,
         IReadOnlyList<RiskRuleSpec> riskRuleSpecs,
         CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Applies an already-validated edit to an existing instrument's basic
+    /// info, questions/choices, and scoring rules, all in one transaction.
+    /// <paramref name="questionIdsToDelete"/> and <paramref name="choiceIdsToDelete"/>
+    /// (choices removed from a question that itself is being kept) and
+    /// <paramref name="scoringRuleIdsToDelete"/> are exactly the rows the
+    /// caller has already confirmed are safe to remove — see
+    /// UpdateInstrumentUseCase.
+    /// </summary>
+    Task<Instrument> UpdateFullInstrumentAsync(
+        InstrumentId instrumentId,
+        string code,
+        string name,
+        string version,
+        string source,
+        bool isActive,
+        IReadOnlyList<QuestionUpdateSpec> questionSpecs,
+        IReadOnlyList<QuestionId> questionIdsToDelete,
+        IReadOnlyList<ChoiceId> choiceIdsToDelete,
+        IReadOnlyList<ScoringRuleUpdateSpec> scoringRuleSpecs,
+        IReadOnlyList<int> scoringRuleIdsToDelete,
+        CancellationToken cancellationToken);
 }

@@ -9,9 +9,9 @@ public sealed class ScoringRule
     public int Id { get; }
     public InstrumentId InstrumentId { get; }
     public ScoreRange Range => _range;
-    public string Level { get; }
-    public string Interpretation { get; }
-    public string Advice { get; }
+    public string Level { get; private set; }
+    public string Interpretation { get; private set; }
+    public string Advice { get; private set; }
 
     public ScoringRule(
         int id,
@@ -31,6 +31,14 @@ public sealed class ScoringRule
     {
         Id = id;
         InstrumentId = instrumentId;
+        Level = level;
+        Interpretation = interpretation;
+        Advice = advice;
+    }
+
+    public void ChangeDetails(ScoreRange range, string level, string interpretation, string advice)
+    {
+        _range = range;
         Level = level;
         Interpretation = interpretation;
         Advice = advice;

@@ -23,6 +23,7 @@ something is shaped the way it is, not just what it is.
 | [0014](0014-unified-user-accounts-with-roles.md) | Real user accounts, unified into one Users table with a Role (supersedes 0012) | 5 |
 | [0015](0015-auth-hardening-lockout-rate-limit-revocable-jwt.md) | Account lockout, auth rate limiting, and revocable JWTs | 5 |
 | [0016](0016-admin-picks-active-start-instrument.md) | Admin picks the active starting instrument, one at a time | 5 |
+| [0017](0017-instrument-editing-with-safety-checks.md) | Instrument editing, gated by referential-safety checks | 5 |
 
 Two lessons repeat on purpose (0006 and 0009): the same "config read too early"
 mistake happened twice, for two different features, months apart in the
